@@ -110,3 +110,19 @@ pub fn keccak_256(input_data: &[u8]) -> Uint256 {
 
     return Uint256::from_bytes_le( &result_bytes );
 }
+
+
+/* --------------
+    Unit Testing
+------------------ */
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_and() {
+        assert_eq!(3, 3);
+    }
+
+}

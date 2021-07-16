@@ -21,7 +21,6 @@ pub fn get_hash_mask() -> Uint256 {
       0         1
       [Index, Hash/Value]
       [Index, Hash/Value]
-      ... (Up to 48 or 128 slots)?
 */
 pub fn verify_merkle(
     channel_idx: usize,
@@ -34,7 +33,7 @@ pub fn verify_merkle(
     let l_hash_mask = get_hash_mask();
 
     let max_merkle_verifier_queries: usize = 128;
-    assert!(unique_queries <= max_merkle_verifier_queries);
+    assert!(unique_queries <= max_merkle_verifier_queries); //TOO_MANY_MERKLE_QUERIES
 
     let hashes_index: usize = queue_idx + 1;
     let slot_size: usize = 2;
@@ -84,6 +83,8 @@ pub fn verify_merkle(
 
         index = ctx[queue_idx + rd_idx].clone();
 
+        //println!("index: {}. sibling_index: {}", index, sibling_index);
+
         if index == Uint256::from_bytes_le( &sibling_index.to_le_bytes() ) {
             new_hash_index = hashes_index + rd_idx;
             // Revert reading from proof.
@@ -98,7 +99,7 @@ pub fn verify_merkle(
         }
 
         // Store the new hash at sibling offset
-        println!("new_hash_index: {}", new_hash_index);
+        //println!("new_hash_index: {}", new_hash_index);
         sibling_data[sibling_offset] = uint256_ops::to_fixed_bytes( &ctx[new_hash_index] );  //TODO: Decide wheather to use LE or BE bits in representation
 
         
@@ -130,7 +131,7 @@ pub fn verify_merkle(
     assert!(hash == root); // Possible causes
                             // Fixed - Misinput for test data (Check against Etherscan)
                             // Somewrong logic in verify_merkle
-                            // Different hashing function
+                            // LOL Somehow this is an issue too... fuck: Different hashing function
                             // EVM Keccak reads it differently from how I read it (LE or BE) (Test using remix)
                             // Copied from the queue wrong or reading wrong thing
                             // Logical error previously that cause bad reads from ctx

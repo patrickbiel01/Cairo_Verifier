@@ -216,7 +216,7 @@ fn init_fri_groups(fri_ctx: usize, ctx: & mut Vec<Uint256>) {
 		last_val = prime_field::fmul(last_val.clone(), gen_fri_group.clone());
 		last_val_inv = prime_field::fmul(last_val_inv.clone(), gen_fri_group_inv.clone());
 
-		let idx = bit_reverse( uint256_ops::from_usize(i), FRI_MAX_FRI_STEP-1);
+		let idx = bit_reverse( uint256_ops::from_usize(i), FRI_MAX_FRI_STEP-1); //TODO: This could be causing the issue? IDK i is smal
 
 		ctx[fri_half_inv_group_idx + idx] = last_val_inv.clone();
 		ctx[fri_group_idx + 2*idx] = last_val.clone();
@@ -282,7 +282,7 @@ pub fn compute_next_layer(
 	);
 
 	merkle_queue_tail += 2;
-	fri_queue_tail += 3;
+	fri_queue_tail += 3; //TODO: Check this val
 	fri_queue_head = new_queue_head0;
 
 
@@ -300,7 +300,7 @@ pub fn compute_next_layer(
 		fri_queue_head = new_queue_head;
 	}
 
-	return (fri_queue_tail - fri_queue_idx) / 3;
+	return (fri_queue_tail - fri_queue_idx) / 3; //TODO: Check this val
 
 }
 
@@ -321,7 +321,7 @@ fn gather_coset_inputs(
 
 	let mut fri_queue_head = fri_queue_head_input; //mutable copy of input
 
-	let mut queue_item_idx = ctx[fri_queue_head].clone();
+	let mut queue_item_idx = ctx[fri_queue_head].clone(); //TODO: Maybe a wrong value being stored here?
 
 	// The coset index is represented by the most significant bits of the queue item index.
 	let negated: Uint256 = uint256_ops::bitwise_not( uint256_ops::from_usize(coset_size-1)  );
@@ -406,7 +406,7 @@ fn do_fri_steps(
 	let mut fri_val = uint256_ops::get_uint256("0");
 	let mut coset_offset = coset_offset_input;
 
-	if fri_coset_size == 8 {
+	if fri_coset_size == 8 { //TODO: Check do_x_fri_steps
 		let (fri_val_tmp, coset_offset_tmp) = do_3_fri_steps( fri_half_inv_group_idx, evals_on_coset_idx, coset_offset, fri_eval_point, ctx );
 		fri_val = fri_val_tmp;
 		coset_offset = coset_offset_tmp;
@@ -423,8 +423,8 @@ fn do_fri_steps(
 	} 
 
 	let idx_in_nxt_step = index / uint256_ops::from_usize(fri_coset_size);
-	//println!("merkle_queue_idx: {}", merkle_queue_idx);
-	//println!("idx_in_nxt_step: {}", idx_in_nxt_step);
+	println!("merkle_queue_idx: {}", merkle_queue_idx);
+	println!("idx_in_nxt_step: {}", idx_in_nxt_step);
 	ctx[merkle_queue_idx] = idx_in_nxt_step.clone();
 
 	let mut hash_data: Vec<u8> = vec![];
@@ -434,8 +434,8 @@ fn do_fri_steps(
 			hash_data.push( data_bytes[j] );
 		}
 	}
-	//println!("merkle_queue_idx + 1: {}", merkle_queue_idx + 1);
-	//println!("hash stuff: {}", uint256_ops::bitwise_and( &get_hash_mask(), &uint256_ops::keccak_256(&hash_data)));
+	println!("merkle_queue_idx + 1: {}", merkle_queue_idx + 1);
+	println!("hash stuff: {}", uint256_ops::bitwise_and( &get_hash_mask(), &uint256_ops::keccak_256(&hash_data)));
 	ctx[merkle_queue_idx + 1] = uint256_ops::bitwise_and( 
 		&get_hash_mask(), &uint256_ops::keccak_256(&hash_data)
 	);

@@ -11,6 +11,12 @@ use num256::Uint256;
 fn main() {
     println!("Hello, world!");
 
+    let input_data: [u8; 64] = [0; 64]; 
+    // for i in 0..input_data.len() {
+    //     println!("{}", input_data[i]);
+    // }
+    println!( "Result of 0 hash: {}", uint256_ops::keccak_256(&input_data) );
+
     //TODO: Decimal -> Hex (Duhh)
 
     let proof = vec![
