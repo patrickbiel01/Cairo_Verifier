@@ -1,0 +1,18 @@
+[package]
+name = "verifier"
+version = "0.1.0"
+authors = ["Patrick Biel <p.biel@outlook.com>"]
+description = "Zero Knowledge Proof Generation and Verification using STARKs"
+repository = "https://github.com/libra/libra"
+homepage = "https://libra.org"
+license = "Apache-2.0"
+publish = false
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hex = "0.4.2"
+num256 = "0.3.1"
+sha3 = "0.9.1"
+num-bigint = "0.2.6"

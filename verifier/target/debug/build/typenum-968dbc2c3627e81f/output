@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/patrickbiel/Desktop/verifier/target/debug/build/typenum-968dbc2c3627e81f/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/patrickbiel/Desktop/verifier/target/debug/build/typenum-968dbc2c3627e81f/out/op.rs
