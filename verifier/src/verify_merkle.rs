@@ -131,7 +131,7 @@ pub fn verify_merkle(
     assert!(hash == root); // Possible causes
                             // Fixed - Misinput for test data (Check against Etherscan)
                             // Somewrong logic in verify_merkle
-                            // LOL Somehow this is an issue too... fuck: Different hashing function
+                            // Different hashing function - Not an issue
                             // EVM Keccak reads it differently from how I read it (LE or BE) (Test using remix)
                             // Copied from the queue wrong or reading wrong thing
                             // Logical error previously that cause bad reads from ctx

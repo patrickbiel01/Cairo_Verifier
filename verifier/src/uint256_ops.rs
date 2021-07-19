@@ -33,14 +33,13 @@ pub fn from_usize(val: usize) -> Uint256 {
     return Uint256::from_bytes_le( &val_bytes );
 }
 
-//Returns 32 bytes corresponding to little endian of val
+//Returns 32 bytes corresponding to big endian of val
+// Used in Keccak to emulate behaviour of EVM memory
 pub fn to_fixed_bytes(val: & Uint256) -> [u8; 32] {
     let mut fixed_bytes: [u8; 32] = [0; 32];
     let val_bytes = val.to_bytes_be();
-    for i in 0..31 {
-        let mut byte = 0;
-        if i < val_bytes.len() { byte = val_bytes[i]; }
-        fixed_bytes[i] =  val_bytes[i];
+    for i in 0..val_bytes.len() {
+        fixed_bytes[32 - val_bytes.len() + i] = val_bytes[i];
     }
     return fixed_bytes;
 }
@@ -102,13 +101,12 @@ pub fn make_copy(val: & Uint256) -> Uint256 {
 
 //Performs a keckkack256 hash on the input bytes and return a Uint256
 pub fn keccak_256(input_data: &[u8]) -> Uint256 {
-    //TODO: Probably prepend 0s if less than disred length
     let mut hasher = Keccak256::new();
     hasher.update(input_data);
     let result = hasher.finalize();
     let result_bytes = result.as_slice();
 
-    return Uint256::from_bytes_le( &result_bytes );
+    return Uint256::from_bytes_be( &result_bytes );
 }
 
 
@@ -121,8 +119,71 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_copy() {
+        let val = make_copy(&get_uint256("124238942389")); 
+        assert_eq!(val , get_uint256("124238942389") );
+    }
+
+    #[test]
+    fn test_to_usize() { //NOTE: Also tests LE or BE of get_uint256's hex string input
+        let val = to_usize(&get_uint256("12345"));
+        assert_eq!(val , 74565);
+    }
+
+    #[test]
+    fn test_from_usize() {
+        let val = from_usize(74565);
+        assert_eq!(val , get_uint256("12345"));
+    }
+
+    #[test]
     fn test_and() {
-        assert_eq!(3, 3);
+        let val1 = get_uint256("1434");
+        let val2 = get_uint256("124");
+        assert_eq!( bitwise_and(&val1, &val2) , get_uint256("24") ); // == 36
+    }
+
+    #[test]
+    fn test_not() {
+        let val = get_uint256("3");
+        assert_eq!( bitwise_not(val) , get_uint256("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC") );
+    }
+
+    #[test]
+    fn test_xor() {
+        let val1 = get_uint256("1434");
+        let val2 = get_uint256("124");
+        assert_eq!( bitwise_xor(&val1, &val2) , get_uint256("1510") ); // == 5392
+    }
+
+    //TODO: Finish writing this test and se this code in to_fixed_bytes representation
+    #[test]
+    fn test_keccak() {
+        //Test 1 - Blank 0s
+        let input_data: [u8; 64] = [0; 64];
+        assert_eq!( keccak_256(&input_data), get_uint256("ad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5") ); //hash obtained from remix - ad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5
+
+        // Test 2 - Determine to use le or be representation
+        let mut combined_data: [u8; 64] = [0; 64];
+        let bytes_val1 = get_uint256("12345").to_bytes_be();
+        let bytes_val2 = get_uint256("6789A").to_bytes_be();
+
+        for i in 0..bytes_val1.len() {
+            combined_data[32 - bytes_val1.len() + i] = bytes_val1[i];
+        }
+        for i in 0..bytes_val2.len() {
+            combined_data[64 - bytes_val2.len() + i] = bytes_val2[i];
+        }
+
+        assert_eq!( keccak_256(&combined_data), get_uint256("8c57df5cb87972af4fa804233ccf33fb470363cc9ffbf00055742fa617812c64") ); //hash obtained from remix - 0x8c57df5cb87972af4fa804233ccf33fb470363cc9ffbf00055742fa617812c64
+    }
+
+    // TODO: Have to_fixed_bytes return BE representation
+    #[test]
+    fn test_to_fixed_bytes() {
+        let val = get_uint256("12345"); //74565 base 10
+        let val_be = to_fixed_bytes(&val);
+        assert_eq!( Uint256::from_bytes_be(&val_be), get_uint256("12345") );
     }
 
 }
