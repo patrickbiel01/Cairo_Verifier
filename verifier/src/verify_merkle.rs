@@ -45,9 +45,7 @@ pub fn verify_merkle(
 
     let mut index: Uint256 = ctx[queue_idx + rd_idx].clone(); // Should be 1028 for test data
 
-    println!("value of index (Should be greater than 1): {}. It is obtained at ctx[{}]", index, queue_idx + rd_idx);
-    //TODO: the value of index is current 0, this makes no senses
-    //Probably have a prior error
+    //println!("value of index (Should be greater than 1): {}. It is obtained at ctx[{}]", index, queue_idx + rd_idx);
 
     //Convert ctx[channel_idx] from uint256 -> usize
     let mut proof_idx = uint256_ops::to_usize( &ctx[channel_idx] );

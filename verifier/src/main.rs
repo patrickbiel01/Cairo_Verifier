@@ -6,6 +6,7 @@ mod horner_eval;
 mod fri;
 mod memory_map;
 mod ecdsa_points_x_column;
+mod ecdsa_points_y_column;
 
 use num256::Uint256;
 
@@ -163,4 +164,6 @@ fn main() {
     let friStepSize = 2;
 
     fri::verifyFRI(proof, &mut friQueue, evaluationPoint, friStepSize, expectedRoot);
+
+    println!("Data is valid; Passed Verification");
 }

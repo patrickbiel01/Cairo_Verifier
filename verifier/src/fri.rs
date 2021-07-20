@@ -63,22 +63,22 @@ pub fn verifyFRI(
 	let merkle_queue_idx = map::MM_MERKLE_QUEUE;
 	let fri_queue_idx = map::MM_FRI_QUEUE;
 
-	for i in 1..friQueue.len() {
-		ctx[fri_queue_idx + i - 1] = friQueue[i].clone();
+	for i in 0..friQueue.len() {
+		ctx[fri_queue_idx + i] = friQueue[i].clone();
 	}
 
-	ctx[channel_idx] = uint256_ops::get_uint256("90B"); //Channel points to proof (end of array) 2315 decimal
-	for i in 1..proof.len() {
+	ctx[channel_idx] = uint256_ops::get_uint256("90B"); //Channel points to proof (end of ctx)  = 2315 decimal
+	for i in 0..proof.len() {
 		ctx.push(proof[i].clone());
 	}
 
-	for i in 2..proof.len() {
-		ctx[merkle_queue_idx + i - 2] = proof[i].clone();
-	}
+	// for i in 0..proof.len() {
+	// 	ctx[merkle_queue_idx + i - 2] = proof[i].clone();
+	// }
 
-	for i in 0..40 {
-		ctx[fri_ctx+i] = ctx[merkle_queue_idx + 2*nQueries].clone();
-	}
+	// for i in 0..40 {
+	// 	ctx[fri_ctx+i] = ctx[merkle_queue_idx + 2*nQueries].clone();
+	// }
  
 
 	init_fri_groups(fri_ctx, &mut ctx);
@@ -87,7 +87,7 @@ pub fn verifyFRI(
 	nQueries = compute_next_layer(
 		channel_idx, fri_queue_idx, merkle_queue_idx, nQueries, evaluationPoint, usize::pow(2, friStepSize as u32), fri_ctx, &mut ctx
 	); //Should be 12
-	println!("nQueries: {}", nQueries);
+	//println!("nQueries: {}", nQueries);
 
 	verify_merkle( channel_idx,  &mut ctx, merkle_queue_idx, expectedRoot, nQueries );
 
@@ -211,13 +211,13 @@ fn init_fri_groups(fri_ctx: usize, ctx: & mut Vec<Uint256>) {
 
 	// To compute [1, -1 (== g^n/2), g^n/4, -g^n/4, ...]
 	// we compute half the elements and derive the rest using negation.
-	println!("halfCosetSize: {}", MAX_COSET_SIZE / 2);
+	//println!("halfCosetSize: {}", MAX_COSET_SIZE / 2);
 	for i in 1..MAX_COSET_SIZE/2 {
 		last_val = prime_field::fmul(last_val.clone(), gen_fri_group.clone()); //Should be for first iteration: 2679026602897868112349604024891625875968950767352485125058791696935099163961, 
 		last_val_inv = prime_field::fmul(last_val_inv.clone(), gen_fri_group_inv.clone()); //Should be for first iteration: 2607735469685256064975697808597423000021425046638838630471627721324227832437, 
 		
 		let idx = bit_reverse( uint256_ops::from_usize(i), FRI_MAX_FRI_STEP-1);
-		println!("idx: {}", idx);
+		//println!("idx: {}", idx);
 		ctx[fri_half_inv_group_idx + idx] = last_val_inv.clone();
 		ctx[fri_group_idx + 2*idx] = last_val.clone();
 		ctx[fri_group_idx + 2*idx + 1] = prime_field::get_k_modulus() - last_val.clone();
@@ -319,12 +319,13 @@ fn gather_coset_inputs(
 	let fri_group_idx = fri_ctx + FRI_CTX_TO_FRI_GROUP_OFFSET;
 	let mut fri_queue_head = fri_queue_head_input; //mutable copy of input
 
-	let mut queue_item_idx = ctx[fri_queue_head].clone(); //TODO: Maybe a wrong value being stored here?
+	let mut queue_item_idx = ctx[fri_queue_head].clone(); //TODO: a completely wrong value being retrieved, should be 4114 on first call
 
 	// The coset index is represented by the most significant bits of the queue item index.
 	let negated: Uint256 = uint256_ops::bitwise_not( uint256_ops::from_usize(coset_size-1)  );
-	//println!("coset_size-1: {}. Negated: {}", coset_size-1, negated); //TODO: The negation seems sus, should orobably test in solidity, maybe use Uint256 in rust
-	let coset_idx = uint256_ops::bitwise_and( &queue_item_idx.clone(), &negated );
+	//println!("queue_item_idx: {}. Negated: {}", queue_item_idx, negated);
+	let coset_idx = uint256_ops::bitwise_and( &queue_item_idx.clone(), &negated ); //TODO: This value is compleltely wrong, should be 4112
+	//println!("coset_idx: {}\n", coset_idx);
 	let next_coset_idx = coset_idx.clone() + uint256_ops::from_usize(coset_size);
 	
 
