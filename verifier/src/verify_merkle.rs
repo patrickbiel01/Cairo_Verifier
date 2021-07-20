@@ -43,7 +43,7 @@ pub fn verify_merkle(
     let mut rd_idx: usize = 0;
     let mut wr_idx: usize = 0; 
 
-    let mut index: Uint256 = ctx[queue_idx + rd_idx].clone();
+    let mut index: Uint256 = ctx[queue_idx + rd_idx].clone(); // Should be 1028 for test data
 
     println!("value of index (Should be greater than 1): {}. It is obtained at ctx[{}]", index, queue_idx + rd_idx);
     //TODO: the value of index is current 0, this makes no senses

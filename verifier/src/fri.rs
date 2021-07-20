@@ -86,7 +86,8 @@ pub fn verifyFRI(
 
 	nQueries = compute_next_layer(
 		channel_idx, fri_queue_idx, merkle_queue_idx, nQueries, evaluationPoint, usize::pow(2, friStepSize as u32), fri_ctx, &mut ctx
-	);
+	); //Should be 12
+	println!("nQueries: {}", nQueries);
 
 	verify_merkle( channel_idx,  &mut ctx, merkle_queue_idx, expectedRoot, nQueries );
 
@@ -139,7 +140,6 @@ pub fn verify_last_layer(ctx: & mut Vec<Uint256>, n_points: usize) {
 pub fn fri_verify_layers(ctx: & mut Vec<Uint256>) {
 
     assert!(map::MAX_SUPPORTED_MAX_FRI_STEP == FRI_MAX_FRI_STEP); //Incosistent MAX_FRI_STEP between MemoryMap.sol and FriLayer.sol
-	// ^ TODO: I guess this brings up the bigger question I have which is which layouts are used when and how can I use it here
 
 	let fri_ctx = map::MM_FRI_CTX;
 	init_fri_groups(fri_ctx, ctx);
@@ -204,23 +204,23 @@ fn init_fri_groups(fri_ctx: usize, ctx: & mut Vec<Uint256>) {
 
 	ctx[fri_half_inv_group_idx] = uint256_ops::get_uint256("1");
 	ctx[fri_group_idx] = uint256_ops::get_uint256("1");
-	ctx[fri_group_idx + 1] = prime_field::get_k_modulus() - uint256_ops::get_uint256("1"); //PRIME - 1
-	// ^ TODO: Or is it prime_field::fsub(0, 1)
+	ctx[fri_group_idx + 1] = prime_field::get_k_modulus() - uint256_ops::get_uint256("1"); //PRIME - 1s
 
 	let mut last_val = uint256_ops::get_uint256("1");
 	let mut last_val_inv = uint256_ops::get_uint256("1"); 
 
 	// To compute [1, -1 (== g^n/2), g^n/4, -g^n/4, ...]
 	// we compute half the elements and derive the rest using negation.
+	println!("halfCosetSize: {}", MAX_COSET_SIZE / 2);
 	for i in 1..MAX_COSET_SIZE/2 {
-		last_val = prime_field::fmul(last_val.clone(), gen_fri_group.clone());
-		last_val_inv = prime_field::fmul(last_val_inv.clone(), gen_fri_group_inv.clone());
-
-		let idx = bit_reverse( uint256_ops::from_usize(i), FRI_MAX_FRI_STEP-1); //TODO: This could be causing the issue? IDK i is smal
-
+		last_val = prime_field::fmul(last_val.clone(), gen_fri_group.clone()); //Should be for first iteration: 2679026602897868112349604024891625875968950767352485125058791696935099163961, 
+		last_val_inv = prime_field::fmul(last_val_inv.clone(), gen_fri_group_inv.clone()); //Should be for first iteration: 2607735469685256064975697808597423000021425046638838630471627721324227832437, 
+		
+		let idx = bit_reverse( uint256_ops::from_usize(i), FRI_MAX_FRI_STEP-1);
+		println!("idx: {}", idx);
 		ctx[fri_half_inv_group_idx + idx] = last_val_inv.clone();
 		ctx[fri_group_idx + 2*idx] = last_val.clone();
-		ctx[fri_group_idx + 2*idx + 1] = prime_field::get_k_modulus() - last_val.clone(); //TODO: PRIME-last_val or fsub(0, lastVal)?;
+		ctx[fri_group_idx + 2*idx + 1] = prime_field::get_k_modulus() - last_val.clone();
 
 	}
 }
@@ -232,10 +232,9 @@ fn init_fri_groups(fri_ctx: usize, ctx: & mut Vec<Uint256>) {
 */
 fn bit_reverse(num: Uint256, num_of_bits: usize) -> usize { //TODO: return Uint256
 	assert!( num_of_bits == 256 || num < prime_field::fpow( &uint256_ops::get_uint256("2"), &uint256_ops::from_usize(num_of_bits) ) ); // Make sure number size is correctly specified
-	//^ TODO: Do we have to check for overflow on 2^num_of_bits or use alternate method
 
 	let mut r = 0;
-	let mut n = num_of_bits;
+	let mut n = uint256_ops::to_usize(&num);
 	for _ in 0..num_of_bits {
 		r = (r * 2) | (n % 2);
 		n = n / 2;
@@ -282,7 +281,7 @@ pub fn compute_next_layer(
 	);
 
 	merkle_queue_tail += 2;
-	fri_queue_tail += 3; //TODO: Check this val
+	fri_queue_tail += 3;
 	fri_queue_head = new_queue_head0;
 
 
@@ -300,7 +299,7 @@ pub fn compute_next_layer(
 		fri_queue_head = new_queue_head;
 	}
 
-	return (fri_queue_tail - fri_queue_idx) / 3; //TODO: Check this val
+	return (fri_queue_tail - fri_queue_idx) / 3;
 
 }
 
@@ -308,9 +307,9 @@ pub fn compute_next_layer(
 	Gathers the "cosetSize" elements that belong to the same coset
 	as the item at the top of the FRI queue and stores them in ctx[MM_FRI_STEP_VALUES:].
 	Returns
-	friQueueHead - friQueueHead_ + 0x60  * (# elements that were taken from the queue).
-	cosetIdx - the start index of the coset that was gathered.
-	cosetOffset_ - the xInv field element that corresponds to cosetIdx.
+		friQueueHead - friQueueHead_ + 0x60  * (# elements that were taken from the queue).
+		cosetIdx - the start index of the coset that was gathered.
+		cosetOffset_ - the xInv field element that corresponds to cosetIdx.
 */
 fn gather_coset_inputs(
 	channel_idx: usize, fri_ctx: usize, fri_queue_head_input: usize, coset_size: usize, ctx: & mut Vec<Uint256>
@@ -318,7 +317,6 @@ fn gather_coset_inputs(
 
 	let mut evals_on_coset_idx = fri_ctx + FRI_CTX_TO_COSET_EVALUATIONS_OFFSET;
 	let fri_group_idx = fri_ctx + FRI_CTX_TO_FRI_GROUP_OFFSET;
-
 	let mut fri_queue_head = fri_queue_head_input; //mutable copy of input
 
 	let mut queue_item_idx = ctx[fri_queue_head].clone(); //TODO: Maybe a wrong value being stored here?
@@ -327,7 +325,6 @@ fn gather_coset_inputs(
 	let negated: Uint256 = uint256_ops::bitwise_not( uint256_ops::from_usize(coset_size-1)  );
 	//println!("coset_size-1: {}. Negated: {}", coset_size-1, negated); //TODO: The negation seems sus, should orobably test in solidity, maybe use Uint256 in rust
 	let coset_idx = uint256_ops::bitwise_and( &queue_item_idx.clone(), &negated );
-	//let coset_idx_usize = uint256_ops::to_usize(&coset_idx);
 	let next_coset_idx = coset_idx.clone() + uint256_ops::from_usize(coset_size);
 	
 
@@ -339,7 +336,7 @@ fn gather_coset_inputs(
 	// To do this we multiply the algebraic coset offset at the top of the queue (c*g^(-k))
 	// by the group element that corresponds to the index inside the coset (g^k)
 	let coset_offset = prime_field::fmul(
-		ctx[fri_queue_head + 2].clone(),  //TODO: We have to read fro, ctx ...
+		ctx[fri_queue_head + 2].clone(),
 		ctx[fri_group_idx + uint256_ops::to_usize( &(queue_item_idx.clone() - coset_idx.clone()) ) ].clone()
 	);
 
@@ -349,7 +346,7 @@ fn gather_coset_inputs(
 	while index < next_coset_idx {
 		// Inline channel operation:
 		// Assume we are going to read the next element from the proof.
-		// If this is not the case add(proofPtr, 0x20) will be reverted.
+		// If this is not the case proof_idx += 1 will be reverted
 		let mut field_elem_idx = proof_idx;
 		proof_idx += 1;
 
@@ -370,11 +367,14 @@ fn gather_coset_inputs(
 
 		// Note that we apply the modulo operation to convert the field elements we read
 		// from the proof to canonical representation (in the range [0, PRIME - 1])
-		ctx[evals_on_coset_idx] = prime_field::mod_prime( uint256_ops::make_copy(&ctx[field_elem_idx]) ); //mod (val, PRIME)
+		ctx[evals_on_coset_idx] = prime_field::mod_prime( ctx[field_elem_idx].clone() ); //mod (val, PRIME)
 		evals_on_coset_idx += 1;
 
 		index += uint256_ops::get_uint256("1");
 	} 
+
+	//NOTE: Potenial bug fix, forgot this line
+	ctx[channel_idx] = uint256_ops::from_usize(proof_idx);
 
 	return (fri_queue_head, coset_idx, coset_offset);
 
@@ -389,16 +389,16 @@ fn gather_coset_inputs(
  /*
 	Operates on the coset of size friFoldedCosetSize that start at index.
 	It produces 3 outputs:
-	1. The field elements that result from doing FRI reductions on the coset.
-	2. The pointInv elements for the location that corresponds to the first output.
-	3. The root of a Merkle tree for the input layer.
+	  1. The field elements that result from doing FRI reductions on the coset.
+	  2. The pointInv elements for the location that corresponds to the first output.
+	  3. The root of a Merkle tree for the input layer.
 	The input is read either from the queue or from the proof depending on data availability.
 	Since the function reads from the queue it returns an updated head pointer.
 */
 fn do_fri_steps(
 	fri_ctx: usize, fri_queue_tail: usize,  coset_offset_input: Uint256, fri_eval_point: Uint256,
 	fri_coset_size: usize, index: Uint256, merkle_queue_idx: usize, ctx: & mut Vec<Uint256>
-) { //TODO: Maybe use Uint256 for index?
+) {
 
 	let evals_on_coset_idx = fri_ctx + FRI_CTX_TO_COSET_EVALUATIONS_OFFSET;
 	let fri_half_inv_group_idx = fri_ctx + FRI_CTX_TO_FRI_HALF_INV_GROUP_OFFSET;
@@ -406,7 +406,9 @@ fn do_fri_steps(
 	let mut fri_val = uint256_ops::get_uint256("0");
 	let mut coset_offset = coset_offset_input;
 
-	if fri_coset_size == 8 { //TODO: Check do_x_fri_steps
+	//println!("FRI_COSET_SIZE = {}", fri_coset_size);
+	// Compare to expected FRI step sizes in order of likelihood, step size 3 being most common.
+	if fri_coset_size == 8 {
 		let (fri_val_tmp, coset_offset_tmp) = do_3_fri_steps( fri_half_inv_group_idx, evals_on_coset_idx, coset_offset, fri_eval_point, ctx );
 		fri_val = fri_val_tmp;
 		coset_offset = coset_offset_tmp;
@@ -423,19 +425,19 @@ fn do_fri_steps(
 	} 
 
 	let idx_in_nxt_step = index / uint256_ops::from_usize(fri_coset_size);
-	println!("merkle_queue_idx: {}", merkle_queue_idx);
-	println!("idx_in_nxt_step: {}", idx_in_nxt_step);
+	//println!("merkle_queue_idx: {}", merkle_queue_idx);
+	//println!("idx_in_nxt_step: {}", idx_in_nxt_step);
 	ctx[merkle_queue_idx] = idx_in_nxt_step.clone();
 
 	let mut hash_data: Vec<u8> = vec![];
 	for i in 0..fri_coset_size {
-		let data_bytes = ctx[evals_on_coset_idx + i].to_bytes_le();
+		let data_bytes = uint256_ops::to_fixed_bytes( &ctx[evals_on_coset_idx + i] );
 		for j in 0..data_bytes.len() {
 			hash_data.push( data_bytes[j] );
 		}
 	}
-	println!("merkle_queue_idx + 1: {}", merkle_queue_idx + 1);
-	println!("hash stuff: {}", uint256_ops::bitwise_and( &get_hash_mask(), &uint256_ops::keccak_256(&hash_data)));
+	//println!("merkle_queue_idx + 1: {}", merkle_queue_idx + 1);
+	//println!("hash stuff: {}", uint256_ops::bitwise_and( &get_hash_mask(), &uint256_ops::keccak_256(&hash_data)));
 	ctx[merkle_queue_idx + 1] = uint256_ops::bitwise_and( 
 		&get_hash_mask(), &uint256_ops::keccak_256(&hash_data)
 	);

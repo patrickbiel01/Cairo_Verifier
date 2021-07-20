@@ -129,4 +129,13 @@ mod tests {
         let val2 = fmul( get_k_modulus() - get_uint256("1"), get_uint256("2")  );
         assert_eq!( val2, get_k_modulus() - get_uint256("2") );
     }
+
+    #[test]
+    fn test_mod_prime() {
+        let val1 = get_k_modulus() - get_uint256("1");
+        assert_eq!( mod_prime(val1), get_k_modulus() - get_uint256("1") );
+
+        let val2 = get_k_modulus() + get_uint256("90A");
+        assert_eq!( mod_prime(val2), get_uint256("90A") );
+    }
 }

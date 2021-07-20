@@ -5,11 +5,14 @@ mod verifier_channel;
 mod horner_eval;
 mod fri;
 mod memory_map;
+mod ecdsa_points_x_column;
 
 use num256::Uint256;
 
 fn main() {
     println!("Hello, world!");
+
+
 
     let proof = vec![
         uint256_ops::get_uint256("BEB1B8B9A8477DF9D44CC95A9CD5A9194C16D0238E7EC364F72487DF5C4A06"),
