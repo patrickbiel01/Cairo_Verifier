@@ -43,9 +43,7 @@ pub fn verify_merkle(
     let mut rd_idx: usize = 0;
     let mut wr_idx: usize = 0; 
 
-    let mut index: Uint256 = ctx[queue_idx + rd_idx].clone(); // Should be 1028 for test data
-
-    //println!("value of index (Should be greater than 1): {}. It is obtained at ctx[{}]", index, queue_idx + rd_idx);
+    let mut index: Uint256 = ctx[queue_idx + rd_idx].clone();
 
     //Convert ctx[channel_idx] from uint256 -> usize
     let mut proof_idx = uint256_ops::to_usize( &ctx[channel_idx] );
@@ -61,13 +59,12 @@ pub fn verify_merkle(
 
 
         // Store the hash corresponding to index in the correct slot.
-        // 0 if index is even and 0x20 if index is odd.
+        // 0 if index is even and 1 if index is odd.
         // The hash of the sibling will be written to the other slot.
-        //mstore(xor(0x20, sibblingOffset), mload(add(rd_idx, hashesPtr))) // TODO: check to_fixed_bytes
         sibling_data[1 ^ sibling_offset] = uint256_ops::to_fixed_bytes( &ctx[rd_idx + hashes_index] );
         rd_idx = ( rd_idx + slot_size ) % queue_size;
 
-         // Inline channel operation:
+        
         // Assume we are going to read a new hash from the proof.
         // If this is not the case proof += 1 will be reverted.
         let mut new_hash_index = proof_idx;
@@ -80,8 +77,6 @@ pub fn verify_merkle(
         ctx[queue_idx + wr_idx] = index / uint256_ops::get_uint256("2");
 
         index = ctx[queue_idx + rd_idx].clone();
-
-        //println!("index: {}. sibling_index: {}", index, sibling_index);
 
         if index == Uint256::from_bytes_le( &sibling_index.to_le_bytes() ) {
             new_hash_index = hashes_index + rd_idx;
@@ -97,8 +92,7 @@ pub fn verify_merkle(
         }
 
         // Store the new hash at sibling offset
-        //println!("new_hash_index: {}", new_hash_index);
-        sibling_data[sibling_offset] = uint256_ops::to_fixed_bytes( &ctx[new_hash_index] );  //TODO: Decide wheather to use LE or BE bits in representation
+        sibling_data[sibling_offset] = uint256_ops::to_fixed_bytes( &ctx[new_hash_index] );
 
         
         // Hash the sibling data
@@ -112,8 +106,6 @@ pub fn verify_merkle(
         // Push the new hash to the end of the queue.
         ctx[hashes_index + wr_idx] = uint256_ops::bitwise_and( &l_hash_mask, &sibling_hash );
 
-        //println!("One value of calculated hash: {}", ctx[hashes_index + wr_idx].clone());
-
         wr_idx = (wr_idx + slot_size) % queue_size;
 
     }
@@ -123,16 +115,10 @@ pub fn verify_merkle(
     //Store proof inde in verifier state at channel
     ctx[channel_idx] = Uint256::from_bytes_le( &proof_idx.to_le_bytes() );   
 
-    println!("Calculated Hash: {} \n Expected Hash: {}", hash, root);
+    // ---------  DEBUGGING   -----------
+    //println!("Calculated Hash: {} \n Expected Hash: {}", hash, root);
 
-    //TODO: Compleltely wrong
-    assert!(hash == root); // Possible causes
-                            // Fixed - Misinput for test data (Check against Etherscan)
-                            // Somewrong logic in verify_merkle
-                            // Different hashing function - Not an issue
-                            // EVM Keccak reads it differently from how I read it (LE or BE) (Test using remix)
-                            // Copied from the queue wrong or reading wrong thing
-                            // Logical error previously that cause bad reads from ctx
+    assert!(hash == root);
 
     return root;
 
