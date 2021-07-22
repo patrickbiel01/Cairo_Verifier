@@ -8,6 +8,7 @@ mod memory_map;
 mod ecdsa_points_x_column;
 mod ecdsa_points_y_column;
 mod penderson_hash_x_column;
+mod penderson_hash_y_column;
 
 use num256::Uint256;
 
