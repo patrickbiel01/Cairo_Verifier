@@ -12,12 +12,12 @@ pub static N_OODS_COEFFICIENTS: usize = N_OODS_VALUES;
 pub static MAX_FRI_STEP: usize = 3;
     
 // ---------- // Air specific constants. ----------
-pub static PUBLIC_MEMORY_STEP = 8;
-pub static PEDERSEN_BUILTIN_RATIO = 8;
-pub static PEDERSEN_BUILTIN_REPETITIONS = 4;
-pub static RC_BUILTIN_RATIO = 8;
-pub static RC_N_PARTS = 8;
-pub static ECDSA_BUILTIN_RATIO = 512;
-pub static ECDSA_BUILTIN_REPETITIONS = 1;
-pub static LAYOUT_CODE = 6579576;
-pub static LOG_CPU_COMPONENT_HEIGHT = 4;
+pub static PUBLIC_MEMORY_STEP: usize = 8;
+pub static PEDERSEN_BUILTIN_RATIO: usize = 8;
+pub static PEDERSEN_BUILTIN_REPETITIONS: usize = 4;
+pub static RC_BUILTIN_RATIO: usize = 8;
+pub static RC_N_PARTS: usize = 8;
+pub static ECDSA_BUILTIN_RATIO: usize = 512;
+pub static ECDSA_BUILTIN_REPETITIONS: usize = 1;
+pub static LAYOUT_CODE: usize = 6579576;
+pub static LOG_CPU_COMPONENT_HEIGHT: usize = 4;
