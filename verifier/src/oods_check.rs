@@ -65,7 +65,6 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 		);
 
 		/* Trace constraints */
-		//TODO: batch_inverse_vec idx is not strictly incrementing, fix
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
 				batch_inverse_vec[1].clone(), ctx[958 + 0].clone()
@@ -186,35 +185,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[17].clone(), ctx[958 + 16].clone()
+				batch_inverse_vec[1+0].clone(), ctx[958 + 16].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 16].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[18].clone(), ctx[958 + 17].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 17].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 17].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[19].clone(), ctx[958 + 18].clone()
+				batch_inverse_vec[1+55].clone(), ctx[958 + 18].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 18].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[20].clone(), ctx[958 + 19].clone()
+				batch_inverse_vec[1+56].clone(), ctx[958 + 19].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 19].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[21].clone(), ctx[958 + 20].clone()
+				batch_inverse_vec[1+63].clone(), ctx[958 + 20].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 20].clone() 
 		);
@@ -228,28 +227,28 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[22].clone(), ctx[958 + 21].clone()
+				batch_inverse_vec[1+0].clone(), ctx[958 + 21].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 21].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[23].clone(), ctx[958 + 22].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 22].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 22].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[24].clone(), ctx[958 + 23].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 23].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 23].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[25].clone(), ctx[958 + 24].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 24].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 24].clone() 
 		);
@@ -262,14 +261,14 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[26].clone(), ctx[958 + 25].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 25].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 25].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[27].clone(), ctx[958 + 26].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 26].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 26].clone() 
 		);
@@ -282,21 +281,21 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[28].clone(), ctx[958 + 27].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 27].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 27].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[29].clone(), ctx[958 + 28].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 28].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 28].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[30].clone(), ctx[958 + 29].clone()
+				batch_inverse_vec[46+1].clone(), ctx[958 + 29].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 29].clone() 
 		);
@@ -306,7 +305,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[31].clone(), ctx[958 + 30].clone()
+					batch_inverse_vec[47+1].clone(), ctx[958 + 30].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 30].clone() 
 			)
@@ -315,35 +314,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[32].clone(), ctx[958 + 31].clone()
+				batch_inverse_vec[48+1].clone(), ctx[958 + 31].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 31].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[33].clone(), ctx[958 + 32].clone()
+				batch_inverse_vec[49+1].clone(), ctx[958 + 32].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 32].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[34].clone(), ctx[958 + 33].clone()
+				batch_inverse_vec[53+1].clone(), ctx[958 + 33].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 33].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[35].clone(), ctx[958 + 34].clone()
+				batch_inverse_vec[54+1].clone(), ctx[958 + 34].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 34].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[36].clone(), ctx[958 + 35].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 35].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 35].clone() 
 		);
@@ -356,35 +355,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[37].clone(), ctx[958 + 36].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 36].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 36].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[38].clone(), ctx[958 + 37].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 37].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 37].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[39].clone(), ctx[958 + 38].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 38].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 38].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[40].clone(), ctx[958 + 39].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 39].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 39].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[41].clone(), ctx[958 + 40].clone()
+				batch_inverse_vec[63+1].clone(), ctx[958 + 40].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 40].clone() 
 		);
@@ -397,28 +396,28 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[42].clone(), ctx[958 + 41].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 41].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 41].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[43].clone(), ctx[958 + 42].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 42].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 42].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[44].clone(), ctx[958 + 43].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 43].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 43].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[45].clone(), ctx[958 + 44].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 44].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 44].clone() 
 		);
@@ -431,14 +430,14 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[46].clone(), ctx[958 + 45].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 45].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 45].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[47].clone(), ctx[958 + 46].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 46].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 46].clone() 
 		);
@@ -452,63 +451,63 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[48].clone(), ctx[958 + 47].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 47].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 47].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[49].clone(), ctx[958 + 48].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 48].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 48].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[50].clone(), ctx[958 + 49].clone()
+				batch_inverse_vec[46+1].clone(), ctx[958 + 49].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 49].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[51].clone(), ctx[958 + 50].clone()
+				batch_inverse_vec[47+1].clone(), ctx[958 + 50].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 50].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[52].clone(), ctx[958 + 51].clone()
+				batch_inverse_vec[48+1].clone(), ctx[958 + 51].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 51].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[53].clone(), ctx[958 + 52].clone()
+				batch_inverse_vec[49+1].clone(), ctx[958 + 52].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 52].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[54].clone(), ctx[958 + 53].clone()
+				batch_inverse_vec[53+1].clone(), ctx[958 + 53].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 53].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[55].clone(), ctx[958 + 54].clone()
+				batch_inverse_vec[54+1].clone(), ctx[958 + 54].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 54].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[56].clone(), ctx[958 + 55].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 55].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 55].clone() 
 		);
@@ -522,35 +521,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[57].clone(), ctx[958 + 56].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 56].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 56].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[58].clone(), ctx[958 + 57].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 57].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 57].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[59].clone(), ctx[958 + 58].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 58].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 58].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[60].clone(), ctx[958 + 59].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 59].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 59].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[61].clone(), ctx[958 + 60].clone()
+				batch_inverse_vec[63+1].clone(), ctx[958 + 60].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 60].clone() 
 		);
@@ -565,7 +564,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[62].clone(), ctx[958 + 61].clone()
+					batch_inverse_vec[0+1].clone(), ctx[958 + 61].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 61].clone() 
 			)		
@@ -573,21 +572,21 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[63].clone(), ctx[958 + 62].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 62].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 62].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[64].clone(), ctx[958 + 63].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 63].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 63].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[65].clone(), ctx[958 + 64].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 64].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 64].clone() 
 		);
@@ -600,14 +599,14 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[66].clone(), ctx[958 + 65].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 65].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 65].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[67].clone(), ctx[958 + 66].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 66].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 66].clone() 
 		);
@@ -620,63 +619,63 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[68].clone(), ctx[958 + 67].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 67].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 67].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[69].clone(), ctx[958 + 68].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 68].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 68].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[70].clone(), ctx[958 + 69].clone()
+				batch_inverse_vec[46+1].clone(), ctx[958 + 69].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 69].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[71].clone(), ctx[958 + 70].clone()
+				batch_inverse_vec[47+1].clone(), ctx[958 + 70].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 70].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[72].clone(), ctx[958 + 71].clone()
+				batch_inverse_vec[48+1].clone(), ctx[958 + 71].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 71].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[73].clone(), ctx[958 + 72].clone()
+				batch_inverse_vec[49+1].clone(), ctx[958 + 72].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 72].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[74].clone(), ctx[958 + 73].clone()
+				batch_inverse_vec[53+1].clone(), ctx[958 + 73].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 73].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[75].clone(), ctx[958 + 74].clone()
+				batch_inverse_vec[54+1].clone(), ctx[958 + 74].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 74].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[76].clone(), ctx[958 + 75].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 75].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 75].clone() 
 		);
@@ -689,35 +688,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[77].clone(), ctx[958 + 76].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 76].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 76].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[78].clone(), ctx[958 + 77].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 77].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 77].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[79].clone(), ctx[958 + 78].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 78].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 78].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[80].clone(), ctx[958 + 79].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 79].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 79].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[81].clone(), ctx[958 + 80].clone()
+				batch_inverse_vec[63+1].clone(), ctx[958 + 80].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 80].clone() 
 		);
@@ -730,28 +729,28 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[82].clone(), ctx[958 + 81].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 81].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 81].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[83].clone(), ctx[958 + 82].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 82].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 82].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[84].clone(), ctx[958 + 83].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 83].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 83].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[85].clone(), ctx[958 + 84].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 84].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 84].clone() 
 		);
@@ -764,14 +763,14 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[86].clone(), ctx[958 + 85].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 85].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 85].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[87].clone(), ctx[958 + 86].clone()
+				batch_inverse_vec[55+1].clone(), ctx[958 + 86].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 86].clone() 
 		);
@@ -784,35 +783,35 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[88].clone(), ctx[958 + 87].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 87].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 87].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[89].clone(), ctx[958 + 88].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 88].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 88].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[90].clone(), ctx[958 + 89].clone()
+				batch_inverse_vec[46+1].clone(), ctx[958 + 89].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 89].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[91].clone(), ctx[958 + 90].clone()
+				batch_inverse_vec[47+1].clone(), ctx[958 + 90].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 90].clone() 
 		);
 
 		res = res.clone() +prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[92].clone(), ctx[958 + 91].clone()
+				batch_inverse_vec[48+1].clone(), ctx[958 + 91].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 91].clone() 
 		);
@@ -821,7 +820,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[93].clone(), ctx[958 + 92].clone()
+					batch_inverse_vec[49+1].clone(), ctx[958 + 92].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 92].clone() 
 			)
@@ -829,21 +828,21 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[94].clone(), ctx[958 + 93].clone()
+				batch_inverse_vec[53+1].clone(), ctx[958 + 93].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 93].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[95].clone(), ctx[958 + 94].clone()
+				batch_inverse_vec[54+1].clone(), ctx[958 + 94].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 94].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[96].clone(), ctx[958 + 95].clone()
+				batch_inverse_vec[56+1].clone(), ctx[958 + 95].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 95].clone() 
 		);
@@ -856,189 +855,189 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[97].clone(), ctx[958 + 96].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 96].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 96].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[98].clone(), ctx[958 + 97].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 97].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 97].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[99].clone(), ctx[958 + 98].clone()
+				batch_inverse_vec[2+1].clone(), ctx[958 + 98].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 98].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[100].clone(), ctx[958 + 99].clone()
+				batch_inverse_vec[3+1].clone(), ctx[958 + 99].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 99].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[101].clone(), ctx[958 + 100].clone()
+				batch_inverse_vec[4+1].clone(), ctx[958 + 100].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 100].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[102].clone(), ctx[958 + 101].clone()
+				batch_inverse_vec[5+1].clone(), ctx[958 + 101].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 101].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[103].clone(), ctx[958 + 102].clone()
+				batch_inverse_vec[6+1].clone(), ctx[958 + 102].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 102].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[104].clone(), ctx[958 + 103].clone()
+				batch_inverse_vec[7+1].clone(), ctx[958 + 103].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 103].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[105].clone(), ctx[958 + 104].clone()
+				batch_inverse_vec[8+1].clone(), ctx[958 + 104].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 104].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[106].clone(), ctx[958 + 105].clone()
+				batch_inverse_vec[9+1].clone(), ctx[958 + 105].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 105].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[107].clone(), ctx[958 + 106].clone()
+				batch_inverse_vec[12+1].clone(), ctx[958 + 106].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 106].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[108].clone(), ctx[958 + 107].clone()
+				batch_inverse_vec[13+1].clone(), ctx[958 + 107].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 107].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[109].clone(), ctx[958 + 108].clone()
+				batch_inverse_vec[16+1].clone(), ctx[958 + 108].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 108].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[110].clone(), ctx[958 + 109].clone()
+				batch_inverse_vec[20+1].clone(), ctx[958 + 109].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 109].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[111].clone(), ctx[958 + 110].clone()
+				batch_inverse_vec[21+1].clone(), ctx[958 + 110].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 110].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[112].clone(), ctx[958 + 111].clone()
+				batch_inverse_vec[27+1].clone(), ctx[958 + 111].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 111].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[113].clone(), ctx[958 + 112].clone()
+				batch_inverse_vec[28+1].clone(), ctx[958 + 112].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 112].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[114].clone(), ctx[958 + 113].clone()
+				batch_inverse_vec[33+1].clone(), ctx[958 + 113].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 113].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[115].clone(), ctx[958 + 114].clone()
+				batch_inverse_vec[34+1].clone(), ctx[958 + 114].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 114].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[116].clone(), ctx[958 + 115].clone()
+				batch_inverse_vec[38+1].clone(), ctx[958 + 115].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 115].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[117].clone(), ctx[958 + 116].clone()
+				batch_inverse_vec[39+1].clone(), ctx[958 + 116].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 116].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[118].clone(), ctx[958 + 117].clone()
+				batch_inverse_vec[42+1].clone(), ctx[958 + 117].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 117].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[119].clone(), ctx[958 + 118].clone()
+				batch_inverse_vec[43+1].clone(), ctx[958 + 118].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 118].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[120].clone(), ctx[958 + 119].clone()
+				batch_inverse_vec[45+1].clone(), ctx[958 + 119].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 119].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[121].clone(), ctx[958 + 120].clone()
+				batch_inverse_vec[50+1].clone(), ctx[958 + 120].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 120].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[122].clone(), ctx[958 + 121].clone()
+				batch_inverse_vec[52+1].clone(), ctx[958 + 121].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 121].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[123].clone(), ctx[958 + 122].clone()
+				batch_inverse_vec[57+1].clone(), ctx[958 + 122].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 122].clone() 
 		);
@@ -1047,7 +1046,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[124].clone(), ctx[958 + 123].clone()
+					batch_inverse_vec[58+1].clone(), ctx[958 + 123].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 123].clone() 
 			)
@@ -1056,49 +1055,49 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[125].clone(), ctx[958 + 124].clone()
+				batch_inverse_vec[59+1].clone(), ctx[958 + 124].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 124].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[126].clone(), ctx[958 + 125].clone()
+				batch_inverse_vec[60+1].clone(), ctx[958 + 125].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 125].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[127].clone(), ctx[958 + 126].clone()
+				batch_inverse_vec[61+1].clone(), ctx[958 + 126].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 126].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[128].clone(), ctx[958 + 127].clone()
+				batch_inverse_vec[62+1].clone(), ctx[958 + 127].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 127].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[129].clone(), ctx[958 + 128].clone()
+				batch_inverse_vec[71+1].clone(), ctx[958 + 128].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 128].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[130].clone(), ctx[958 + 129].clone()
+				batch_inverse_vec[72+1].clone(), ctx[958 + 129].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 129].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[131].clone(), ctx[958 + 130].clone()
+				batch_inverse_vec[81+1].clone(), ctx[958 + 130].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 130].clone() 
 		);
@@ -1111,28 +1110,28 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[132].clone(), ctx[958 + 131].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 131].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 131].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[133].clone(), ctx[958 + 132].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 132].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 132].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[134].clone(), ctx[958 + 133].clone()
+				batch_inverse_vec[2+1].clone(), ctx[958 + 133].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 133].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[135].clone(), ctx[958 + 134].clone()
+				batch_inverse_vec[3+1].clone(), ctx[958 + 134].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 134].clone() 
 		);
@@ -1145,133 +1144,133 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[136].clone(), ctx[958 + 135].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 135].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 135].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[137].clone(), ctx[958 + 136].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 136].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 136].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[138].clone(), ctx[958 + 137].clone()
+				batch_inverse_vec[2+1].clone(), ctx[958 + 137].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 137].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[139].clone(), ctx[958 + 138].clone()
+				batch_inverse_vec[3+1].clone(), ctx[958 + 138].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 138].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[140].clone(), ctx[958 + 139].clone()
+				batch_inverse_vec[4+1].clone(), ctx[958 + 139].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 139].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[141].clone(), ctx[958 + 140].clone()
+				batch_inverse_vec[5+1].clone(), ctx[958 + 140].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 140].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[142].clone(), ctx[958 + 141].clone()
+				batch_inverse_vec[6+1].clone(), ctx[958 + 141].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 141].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[143].clone(), ctx[958 + 142].clone()
+				batch_inverse_vec[7+1].clone(), ctx[958 + 142].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 142].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[144].clone(), ctx[958 + 143].clone()
+				batch_inverse_vec[8+1].clone(), ctx[958 + 143].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 143].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[145].clone(), ctx[958 + 144].clone()
+				batch_inverse_vec[9+1].clone(), ctx[958 + 144].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 144].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[146].clone(), ctx[958 + 145].clone()
+				batch_inverse_vec[11+1].clone(), ctx[958 + 145].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 145].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[147].clone(), ctx[958 + 146].clone()
+				batch_inverse_vec[12+1].clone(), ctx[958 + 146].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 146].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[148].clone(), ctx[958 + 147].clone()
+				batch_inverse_vec[13+1].clone(), ctx[958 + 147].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 147].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[149].clone(), ctx[958 + 148].clone()
+				batch_inverse_vec[15+1].clone(), ctx[958 + 148].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 148].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[150].clone(), ctx[958 + 149].clone()
+				batch_inverse_vec[17+1].clone(), ctx[958 + 149].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 149].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[151].clone(), ctx[958 + 150].clone()
+				batch_inverse_vec[21+1].clone(), ctx[958 + 150].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 150].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[152].clone(), ctx[958 + 151].clone()
+				batch_inverse_vec[23+1].clone(), ctx[958 + 151].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 151].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[153].clone(), ctx[958 + 152].clone()
+				batch_inverse_vec[24+1].clone(), ctx[958 + 152].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 152].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[154].clone(), ctx[958 + 153].clone()
+				batch_inverse_vec[26+1].clone(), ctx[958 + 153].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 153].clone() 
 		);	
@@ -1280,7 +1279,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[155].clone(), ctx[958 + 154].clone()
+					batch_inverse_vec[29+1].clone(), ctx[958 + 154].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 154].clone() 
 			)
@@ -1288,49 +1287,49 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[156].clone(), ctx[958 + 155].clone()
+				batch_inverse_vec[31+1].clone(), ctx[958 + 155].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 155].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[157].clone(), ctx[958 + 156].clone()
+				batch_inverse_vec[35+1].clone(), ctx[958 + 156].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 156].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[158].clone(), ctx[958 + 157].clone()
+				batch_inverse_vec[37+1].clone(), ctx[958 + 157].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 157].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[159].clone(), ctx[958 + 158].clone()
+				batch_inverse_vec[40+1].clone(), ctx[958 + 158].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 158].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[160].clone(), ctx[958 + 159].clone()
+				batch_inverse_vec[41+1].clone(), ctx[958 + 159].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 159].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[161].clone(), ctx[958 + 160].clone()
+				batch_inverse_vec[69+1].clone(), ctx[958 + 160].clone() //Nice!
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 160].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[162].clone(), ctx[958 + 161].clone()
+				batch_inverse_vec[70+1].clone(), ctx[958 + 161].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 161].clone() 
 		);
@@ -1343,161 +1342,161 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[163].clone(), ctx[958 + 162].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 162].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 162].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[164].clone(), ctx[958 + 163].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 163].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 163].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[165].clone(), ctx[958 + 164].clone()
+				batch_inverse_vec[2+1].clone(), ctx[958 + 164].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 164].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[166].clone(), ctx[958 + 165].clone()
+				batch_inverse_vec[4+1].clone(), ctx[958 + 165].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 165].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[167].clone(), ctx[958 + 166].clone()
+				batch_inverse_vec[6+1].clone(), ctx[958 + 166].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 166].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[168].clone(), ctx[958 + 167].clone()
+				batch_inverse_vec[8+1].clone(), ctx[958 + 167].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 167].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[169].clone(), ctx[958 + 168].clone()
+				batch_inverse_vec[10+1].clone(), ctx[958 + 168].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 168].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[170].clone(), ctx[958 + 169].clone()
+				batch_inverse_vec[12+1].clone(), ctx[958 + 169].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 169].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[171].clone(), ctx[958 + 170].clone()
+				batch_inverse_vec[14+1].clone(), ctx[958 + 170].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 170].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[172].clone(), ctx[958 + 171].clone()
+				batch_inverse_vec[17+1].clone(), ctx[958 + 171].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 171].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[173].clone(), ctx[958 + 172].clone()
+				batch_inverse_vec[18+1].clone(), ctx[958 + 172].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 172].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[174].clone(), ctx[958 + 173].clone()
+				batch_inverse_vec[19+1].clone(), ctx[958 + 173].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 173].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[175].clone(), ctx[958 + 174].clone()
+				batch_inverse_vec[20+1].clone(), ctx[958 + 174].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 174].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[176].clone(), ctx[958 + 175].clone()
+				batch_inverse_vec[22+1].clone(), ctx[958 + 175].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 175].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[177].clone(), ctx[958 + 176].clone()
+				batch_inverse_vec[25+1].clone(), ctx[958 + 176].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 176].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[178].clone(), ctx[958 + 177].clone()
+				batch_inverse_vec[27+1].clone(), ctx[958 + 177].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 177].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[179].clone(), ctx[958 + 178].clone()
+				batch_inverse_vec[30+1].clone(), ctx[958 + 178].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 178].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[180].clone(), ctx[958 + 179].clone()
+				batch_inverse_vec[32+1].clone(), ctx[958 + 179].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 179].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[181].clone(), ctx[958 + 180].clone()
+				batch_inverse_vec[36+1].clone(), ctx[958 + 180].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 180].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[182].clone(), ctx[958 + 181].clone()
+				batch_inverse_vec[44+1].clone(), ctx[958 + 181].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 181].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[183].clone(), ctx[958 + 182].clone()
+				batch_inverse_vec[51+1].clone(), ctx[958 + 182].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 182].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[184].clone(), ctx[958 + 183].clone()
+				batch_inverse_vec[64+1].clone(), ctx[958 + 183].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 183].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[185].clone(), ctx[958 + 184].clone()
+				batch_inverse_vec[65+1].clone(), ctx[958 + 184].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 184].clone() 
 		);
@@ -1506,7 +1505,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 			res.clone(),
 			prime_field::fmul(
 				prime_field::fmul(
-					batch_inverse_vec[186].clone(), ctx[958 + 185].clone()
+					batch_inverse_vec[66+1].clone(), ctx[958 + 185].clone()
 				), 
 				column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 185].clone() 
 			)
@@ -1514,70 +1513,70 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[187].clone(), ctx[958 + 186].clone()
+				batch_inverse_vec[67+1].clone(), ctx[958 + 186].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 186].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[188].clone(), ctx[958 + 187].clone()
+				batch_inverse_vec[68+1].clone(), ctx[958 + 187].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 187].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[189].clone(), ctx[958 + 188].clone()
+				batch_inverse_vec[73+1].clone(), ctx[958 + 188].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 188].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[190].clone(), ctx[958 + 189].clone()
+				batch_inverse_vec[74+1].clone(), ctx[958 + 189].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 189].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[191].clone(), ctx[958 + 190].clone()
+				batch_inverse_vec[75+1].clone(), ctx[958 + 190].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 190].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[192].clone(), ctx[958 + 191].clone()
+				batch_inverse_vec[76+1].clone(), ctx[958 + 191].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 191].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[193].clone(), ctx[958 + 192].clone()
+				batch_inverse_vec[77+1].clone(), ctx[958 + 192].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 192].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[194].clone(), ctx[958 + 193].clone()
+				batch_inverse_vec[78+1].clone(), ctx[958 + 193].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 193].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[195].clone(), ctx[958 + 194].clone()
+				batch_inverse_vec[79+1].clone(), ctx[958 + 194].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 194].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[196].clone(), ctx[958 + 195].clone()
+				batch_inverse_vec[80+1].clone(), ctx[958 + 195].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 195].clone() 
 		);
@@ -1590,28 +1589,28 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[197].clone(), ctx[958 + 196].clone()
+				batch_inverse_vec[0+1].clone(), ctx[958 + 196].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 196].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[198].clone(), ctx[958 + 197].clone()
+				batch_inverse_vec[1+1].clone(), ctx[958 + 197].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 197].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[199].clone(), ctx[958 + 198].clone()
+				batch_inverse_vec[2+1].clone(), ctx[958 + 198].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 198].clone() 
 		);
 
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[200].clone(), ctx[958 + 199].clone()
+				batch_inverse_vec[5+1].clone(), ctx[958 + 199].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[708 + 199].clone() 
 		);
@@ -1625,7 +1624,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 		);
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[83].clone(), ctx[1158].clone()
+				batch_inverse_vec[82+1].clone(), ctx[1158].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[908].clone() 
 		);
@@ -1636,7 +1635,7 @@ pub fn oods_check_layout_1(ctx: &mut Vec<Uint256>) -> (usize, usize) {
 		);
 		res = res.clone() + prime_field::fmul(
 			prime_field::fmul(
-				batch_inverse_vec[83].clone(), ctx[1159].clone()
+				batch_inverse_vec[82+1].clone(), ctx[1159].clone()
 			), 
 			column_val.clone() + prime_field::get_k_modulus() - ctx[909].clone() 
 		);
@@ -2817,12 +2816,7 @@ pub fn oods_prepare_inverses_layout_1(ctx: &mut Vec<Uint256>, batch_inverse_vec:
 	);
 
 	if prod_inv == uint256_ops::get_uint256("0") {
-		 // Solidity generates reverts with reason that look as follows:
-		// 1. 4 bytes with the constant 0x08c379a0 (== Keccak256(b'Error(string)')[:4]).
-		// 2. 32 bytes offset bytes (always 0x20 as far as i can tell).
-		// 3. 32 bytes with the length of the revert reason.
-		// 4. Revert reason string.
-		//TODO: Decide what to do
+		assert!(false); //Batch inverse product is zero
 	}
 
 	// Compute the inverses.
