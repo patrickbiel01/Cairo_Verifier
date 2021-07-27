@@ -12,33 +12,36 @@ use crate::prime_field;
 */
 
 
-fn get_prng_ptr(channel_idx: &usize) -> usize {
+fn get_prng_ptr(channel_idx: usize) -> usize {
 	return channel_idx + 1;
 }
 
-pub fn init_channel(channel_offset: & mut usize, proof_offset: usize, public_input_hash: Uint256, ctx: &mut Vec<Uint256>) {
-	*channel_offset = proof_offset + 1; //TODO: Do we want to write directly to it?
+pub fn init_channel(channel_offset: usize, proof_offset: usize, public_input_hash: Uint256, ctx: &mut Vec<Uint256>) {
+	ctx[channel_offset] = uint256_ops::from_usize(proof_offset + 1);
 	init_prng( get_prng_ptr(channel_offset), public_input_hash, ctx );
 }
 
-pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx: &mut usize, ctx: &mut Vec<Uint256>) {
+pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx_input: usize, ctx: &mut Vec<Uint256>) {
 	assert!(n_elements < 0x1000000); //Overflow protection failed
 
 	let digest_idx = channel_idx + 1;
 	let counter_idx = channel_idx + 2;
+	let mut target_idx = target_idx_input;
 
 	let mask = uint256_ops::get_uint256("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
-	let end = *target_idx + n_elements;
-	while *target_idx < end {
+	let end = target_idx + n_elements;
+	while target_idx < end {
 
 		let mut field_element = prime_field::get_k_modulus();
 		while field_element >= prime_field::get_k_modulus() {
 
         	let mut combined_data: [u8; 64] = [0; 64];
+			let digest_bytes = uint256_ops::to_fixed_bytes( &ctx[digest_idx] );
+			let counter_bytes = uint256_ops::to_fixed_bytes( &ctx[digest_idx+1] );
         	for i in 0..31 {
-            	combined_data[i] = ctx[digest_idx].to_bytes_le()[i];
-            	combined_data[i + 32] = ctx[digest_idx + 1].to_bytes_le()[i];
+            	combined_data[i] = digest_bytes[i];
+            	combined_data[i + 32] = counter_bytes[i];
         	}
 
 			field_element = uint256_ops::bitwise_and( &mask, &uint256_ops::keccak_256(&combined_data) );
@@ -46,9 +49,9 @@ pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx: &m
 			ctx[counter_idx] += uint256_ops::get_uint256("1");
 		}
 
-		ctx[*target_idx] = prime_field::from_montgomery(field_element);
+		ctx[target_idx] = prime_field::from_montgomery(field_element);
 
-		*target_idx += 1;
+		target_idx += 1;
 	}
 }
 
@@ -78,6 +81,13 @@ fn read_bytes(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 
 
 	return val;
 }
+pub fn read_hash(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 {
+	let val = read_bytes(channel_idx, mix, ctx);
+	return val;
+}
+
+
+
 
 pub fn read_field_elements(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 {
 	let result = read_bytes(channel_idx, mix, ctx).to_bytes_le();
@@ -102,7 +112,7 @@ pub fn verify_pow(channel_idx: usize, pow_bits: usize, ctx: &mut Vec<Uint256>) {
 		bytes_bank[i+8] = digest_bytes[i];
 	}
 	bytes_bank[40] = pow_bits as u8;
-	//Do a Keccak on 42 bytes of 0-7: POW requirments, 8-46: digest, 41-42: proofOfWorkBits
+	//Do a Keccak on 42 bytes of 0-7: POW requirments, 8-46: digest, 41-42: pow_bits
 	let hash_bytes = uint256_ops::keccak_256(&bytes_bank).to_bytes_le();
 	//Write hash to bytes_bank
 	for i in 0..32 {
@@ -154,7 +164,7 @@ pub fn send_random_queries(
 
 	for _ in 0..count {
 		if shift == 0 {
-			val = get_random_bytes( get_prng_ptr(&channel_idx), ctx );
+			val = get_random_bytes( get_prng_ptr(channel_idx), ctx );
 		}
 		
 		shift -= 2;

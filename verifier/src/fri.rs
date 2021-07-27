@@ -162,7 +162,7 @@ fn bit_reverse(num: Uint256, num_of_bits: usize) -> usize {
 	return r;
 }
 
-fn get_fri_steps(ctx: &mut Vec<Uint256>) -> Vec<Uint256> {
+pub fn get_fri_steps(ctx: &mut Vec<Uint256>) -> Vec<Uint256> {
 	let mut fri_steps: Vec<Uint256> =  vec![];
 	fri_steps.push(ctx[map::MM_FRI_STEPS_PTR].clone());
 	return fri_steps; //TODO: This doesn't seem right ...
@@ -695,7 +695,7 @@ fn verify_fri(
 ) {
 	assert!(fri_step_size <= FRI_MAX_FRI_STEP); //FRI step size too large
 	/*
-		The fri_queue should have of 3*nQueries + 1 elements, beginning with nQueries triplets
+		The fri_queue should have of 3*n_queries + 1 elements, beginning with n_queries triplets
 		of the form (query_index, FRI_value, FRI_inverse_point), and ending with a single buffer
 		cell set to 0, which is accessed and read during the computation of the FRI layer.
 	*/

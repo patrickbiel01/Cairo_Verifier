@@ -11,6 +11,8 @@ mod penderson_hash_x_column;
 mod penderson_hash_y_column;
 mod stark_params;
 mod oods_check;
+mod public_input_offsets;
+mod verify_proof;
 
 fn main() {
     println!("Hello, world!");

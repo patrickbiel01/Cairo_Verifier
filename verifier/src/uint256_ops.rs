@@ -1,6 +1,7 @@
 use num256::uint256::Uint256 as Uint256;
 use sha3::Keccak256;
 use sha3::Digest;
+use num_bigint::BigUint;
 
 // Returns a Uint256 from string containg appropriate hex value
 pub fn get_uint256(str: &str) -> Uint256 {
@@ -107,6 +108,22 @@ pub fn keccak_256(input_data: &[u8]) -> Uint256 {
     let result_bytes = result.as_slice();
 
     return Uint256::from_bytes_be( &result_bytes );
+}
+
+pub fn safe_div(numerator: &Uint256, denominator: &Uint256) -> Uint256 {
+    assert!(*denominator > get_uint256("0")); //The denominator must not be zero
+
+    let num_bigint = BigUint::from_bytes_le( &(*numerator).to_bytes_le() );
+    let den_bigint = BigUint::from_bytes_le( &(*denominator).to_bytes_le() );
+    let num_mod_den = Uint256::from_bytes_le( 
+        &num_bigint.modpow( 
+            &BigUint::new(vec![1]), 
+            &den_bigint
+        ).to_bytes_le() 
+    );
+    assert!(num_mod_den == get_uint256("0")); //The numerator is not divisible by the denominator
+
+    return numerator.clone() / denominator.clone();
 }
 
 
