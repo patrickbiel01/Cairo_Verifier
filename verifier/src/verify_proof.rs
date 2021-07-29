@@ -1,4 +1,5 @@
 use num256::uint256::Uint256 as Uint256;
+use std::collections::HashMap;
 
 use crate::uint256_ops;
 use crate::prime_field;
@@ -8,6 +9,11 @@ use crate::verifier_channel;
 use crate::stark_params;
 use crate::public_input_offsets as pub_input;
 use crate::fri;
+use crate::penderson_hash_x_column as penderson_hash_x;
+use crate::penderson_hash_y_column as penderson_hash_y;
+use crate::ecdsa_points_x_column as ecdsa_points_x;
+use crate::ecdsa_points_y_column as ecdsa_points_y;
+use crate::oods_check::{oods_check};
 
 
 
@@ -24,6 +30,11 @@ static PROOF_PARAMS_PROOF_OF_WORK_BITS_OFFSET:usize = 2;
 static PROOF_PARAMS_FRI_LAST_LAYER_DEG_BOUND_OFFSET:usize = 3;
 static PROOF_PARAMS_N_FRI_STEPS_OFFSET:usize = 4;
 static PROOF_PARAMS_FRI_STEPS_OFFSET:usize = 5;
+
+
+pub static N_BUILTINS: usize = 4;
+pub static N_MAIN_ARGS: usize = N_BUILTINS;
+pub static N_MAIN_RETURN_VALUES: usize = N_BUILTINS;
 
 
 //TODO: change every instance where i fucked up and put a decimal number instead of hex for get_uint256
@@ -169,13 +180,12 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
     let expected_pub_input_len = pub_input::get_public_input_length( uint256_ops::to_usize(&ctx[map::MM_N_PUBLIC_MEM_PAGES]) );
     assert!(expected_pub_input_len == public_input.len()); // Public input length mismatch
 
-    let lmm_pub_input_idx = map::MM_PUBLIC_INPUT_PTR;
-    //assembly {
-        //mstore(add(ctx, mul(add(lmm_pub_input_idx, 1), 0x20)), add(public_input, 0x20))
-    //}
+
     // Set public input pointer to point at the first word of the public input
-    // (skipping length word)
-    //We don't need or can do a ptr to public_input so we could wiher append it to the end of ctx and store start index or use public_input array whenever we need it
+    ctx[map::MM_PUBLIC_INPUT_PTR+1] = uint256_ops::from_usize(ctx.len());
+    for i in 0..public_input.len() { //Append public input to end of verifier state / context
+        ctx.push(public_input[i].clone());
+    }
 
     // Pedersen's shiftPoint values
     ctx[map::MM_PEDERSEN__SHIFT_POINT_X] = uint256_ops::get_uint256("49ee3eba8c1600700ee1b87eb599f16716b0b1022947733551fde4050ca6804");
@@ -344,8 +354,92 @@ pub fn read_query_responses_and_decommit(
     the term (f(x) - c)/(x-z).
 */
 pub fn compute_first_fri_layer(ctx: & mut Vec<Uint256>) {
+    //Prepare evaluation point
+    adjust_query_indicies_and_prepare_eval_points(ctx);
 
+    //Read and decommit trace
+    read_query_responses_and_decommit(
+        ctx, 
+        stark_params::N_COLUMNS_IN_MASK, 
+        stark_params::N_COLUMNS_IN_TRACE0, 
+        map::MM_TRACE_QUERY_RESPONSES, 
+        ctx[map::MM_TRACE_COMMITMENT].clone()
+    );
+
+    if stark_params::N_COLUMNS_IN_TRACE1 > 0 { //true - hash (simulated) interaction
+        //Read and decommit second trace
+        read_query_responses_and_decommit(
+            ctx, 
+            stark_params::N_COLUMNS_IN_MASK, 
+            stark_params::N_COLUMNS_IN_TRACE1, 
+            map::MM_TRACE_QUERY_RESPONSES + stark_params::N_COLUMNS_IN_TRACE0, 
+            ctx[map::MM_TRACE_COMMITMENT+1].clone()
+        );
+    }
+
+    //Read and decommit composition polynomial
+    read_query_responses_and_decommit(
+        ctx, 
+        stark_params::CONSTRAINTS_DEGREE_BOUND, 
+        stark_params::CONSTRAINTS_DEGREE_BOUND, 
+        map::MM_COMPOSITION_QUERY_RESPONSES,
+        ctx[map::MM_OODS_COMMITMENT].clone()
+    );
+
+    //Make sure the prover provided proper evaluations
+    oods_check(ctx);
 }
+
+/*
+    Adjusts the query indices and generates evaluation points for each query index.
+
+    Indices adjustment:
+        The query indices adjustment is needed because both the Merkle verification and FRI
+        expect queries "full binary tree in array" indices.
+        The adjustment is simply adding evalDomainSize to each query.
+        Note that evalDomainSize == 2^(#FRI layers) == 2^(Merkle tree hight).
+
+    evalPoints generation:
+        for each query index "idx" we compute the corresponding evaluation point:
+            g^(bitReverse(idx, log_evalDomainSize).
+*/
+fn adjust_query_indicies_and_prepare_eval_points(ctx: & mut Vec<Uint256>) {
+    let n_unique_queries = uint256_ops::to_usize(&ctx[map::MM_N_UNIQUE_QUERIES]);
+    let mut fri_queue = map::MM_FRI_QUEUE;
+    let fri_queue_end = fri_queue + 3*n_unique_queries;
+    let eval_domain_size = uint256_ops::to_usize(&ctx[map::MM_EVAL_DOMAIN_SIZE]);
+    let log_eval_domain_size = uint256_ops::to_usize(&ctx[map::MM_LOG_EVAL_DOMAIN_SIZE]);
+    let eval_domain_generator = ctx[map::MM_EVAL_DOMAIN_GENERATOR].clone();
+
+    while fri_queue < fri_queue_end {
+        let mut query_idx = uint256_ops::to_usize(&ctx[fri_queue]);
+
+        // // Adjust queryIdx, see comment in function description.
+        let adjusted_query_idx = query_idx + eval_domain_size;
+
+        // Compute the evaluation point corresponding to the current queryIdx. 
+        ctx[map::MM_OODS_EVAL_POINTS] = prime_field::fpow(
+            &eval_domain_generator, & uint256_ops::from_usize( bit_reverse(query_idx, log_eval_domain_size) )
+        );
+
+        fri_queue += 3;
+    }
+}
+fn bit_reverse(num: usize, num_of_bits: usize) -> usize {
+	assert!( num_of_bits == 256 || num < uint256_ops::to_usize(&prime_field::fpow( &uint256_ops::get_uint256("2"), &uint256_ops::from_usize(num_of_bits) )) ); // Make sure number size is correctly specified
+
+	let mut r = 0;
+	let mut n = num;
+	for _ in 0..num_of_bits {
+		r = (r * 2) | (n % 2);
+		n = n / 2;
+	}
+
+	return r;
+}
+
+
+
 
 
 
@@ -357,8 +451,49 @@ pub fn compute_first_fri_layer(ctx: & mut Vec<Uint256>) {
     with the commited trace and composition ploynomials.
 */
 pub fn oods_consistency_check(ctx: & mut Vec<Uint256>) {
-    //TODO: Figure out which oodsContract address is being used
+    //TODO: Implement verifyMemoryPageFacts
+    //verifyMemoryPageFacts(ctx);
 
+    let oods_point = ctx[map::MM_OODS_POINT].clone();
+
+    // The number of copies in the pedersen hash periodic columns is
+    // nSteps / PEDERSEN_BUILTIN_RATIO / PEDERSEN_BUILTIN_REPETITIONS
+    let n_penderson_hash_copies = uint256_ops::safe_div(
+       &prime_field::fpow(&uint256_ops::get_uint256("2"), &ctx[map::MM_LOG_N_STEPS]), 
+        &uint256_ops::from_usize(stark_params::PEDERSEN_BUILTIN_RATIO * stark_params::PEDERSEN_BUILTIN_REPETITIONS)
+    );
+    let z_point_pow_penderson = prime_field::fpow( &oods_point, &n_penderson_hash_copies );
+
+    ctx[map::MM_PERIODIC_COLUMN__PEDERSEN__POINTS__X] = penderson_hash_x::compute(z_point_pow_penderson.clone());
+    ctx[map::MM_PERIODIC_COLUMN__PEDERSEN__POINTS__Y] = penderson_hash_y::compute(z_point_pow_penderson.clone());
+
+    // The number of copies in the ECDSA signature periodic columns is
+    // nSteps / ECDSA_BUILTIN_RATIO / ECDSA_BUILTIN_REPETITIONS
+    let n_ecdsa_signature_copy = uint256_ops::safe_div(
+        &prime_field::fpow(&uint256_ops::get_uint256("2"), &ctx[map::MM_LOG_N_STEPS]),
+        &uint256_ops::from_usize(stark_params::ECDSA_BUILTIN_RATIO * stark_params::ECDSA_BUILTIN_REPETITIONS)
+    );
+    let z_point_pow_ecdsa = prime_field::fpow( &oods_point, &n_ecdsa_signature_copy );
+
+    ctx[map::MM_PERIODIC_COLUMN__ECDSA__GENERATOR_POINTS__X] = ecdsa_points_x::compute(z_point_pow_ecdsa.clone());
+    ctx[map::MM_PERIODIC_COLUMN__ECDSA__GENERATOR_POINTS__Y] = ecdsa_points_y::compute(z_point_pow_ecdsa.clone());
+
+    ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__INTERACTION_ELM] = ctx[map::MM_INTERACTION_ELEMENTS].clone();
+    ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__HASH_INTERACTION_ELM0] = ctx[map::MM_INTERACTION_ELEMENTS + 1].clone();
+    ctx[map::MM_RC16__PERM__INTERACTION_ELM] = ctx[map::MM_INTERACTION_ELEMENTS + 2].clone();
+
+    ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__PUBLIC_MEMORY_PROD] = uint256_ops::get_uint256("TODO: Implement computePublicMemoryQuotient");//TODO: Implement computePublicMemoryQuotient(ctx);
+
+    let composition_from_trace_value = uint256_ops::get_uint256("TODO: Unimlpemented comntract"); //TODO: Implement polynomial contraints contract to obtain composition_from_trace_value
+
+    let claimed_composition = prime_field::fadd(
+        ctx[map::MM_OODS_VALUES + stark_params::MASK_SIZE].clone(),
+        prime_field::fmul(
+            oods_point.clone(), ctx[map::MM_OODS_VALUES + stark_params::MASK_SIZE + 1].clone()
+        )
+    );
+
+    assert!( composition_from_trace_value == claimed_composition ); //claimedComposition does not match trace
 }
 
 
@@ -382,8 +517,18 @@ pub fn validate_fri_params(fri_steps: & mut Vec<Uint256>, log_trace_length: Uint
 }
 
 
+
+
+
+
+
+
+
+
+
+
 /*
-    Main driver for Verifying proof:
+    Interace for Verifying Proof:
         - Checks arithmetization
         - Checks low-degreeness using FRI protocol
 */
@@ -397,7 +542,9 @@ pub fn verify_proof(
 
     /* ------------ GPS Statement Verifier ----------- */
 
-    //assert!( cairo_aux_input.len() > get_offset_n_public_mem_pages() );
+    //TODO: Some asserts from verifyProofAndRegister
+
+    //TODO: Create public input (cairo_aux_inoput w/o z and alpha)
 
     /* Transform cairo_aux_input -> cairoPublic input (- z, alpha) */
     // The values z and alpha are used only for the fact registration of the main page.
@@ -408,7 +555,12 @@ pub fn verify_proof(
         cairo_pub_input[i] = cairo_aux_input[i].clone();
     }
 
+    // Process public memory and store facts of registered pages in hashmap
+    let mut memory_page_fact_reg: HashMap<Uint256, bool> = HashMap::new();
+    let (pub_mem_len, mem_hash, prod) = register_public_memory_main_page(&task_meta_data, &cairo_aux_input, &mut memory_page_fact_reg);
 
+
+    //TODO: Some asserts from verifyProofAndRegister
 
     /* --------- StarkVerifier.verifyProof --------- */
 
@@ -418,7 +570,7 @@ pub fn verify_proof(
     let channel_idx = map::MM_CHANNEL;
 
     //Append the proof to the end of the verifier state and store a pointer there
-    let proof_idx = map::MM_CONTEXT_SIZE + 1;
+    let proof_idx = verifier_state.len();
     for i in 0..proof.len() {
         verifier_state.push( proof[i].clone() );
     }
@@ -490,5 +642,10 @@ pub fn verify_proof(
 
     fri::fri_verify_layers(&mut verifier_state);
 
+
+    /* --------- End of StarkVerifier.verifyProof --------- */
+
+    //TODO: registerGpsFact? and somwhow ensure the program_hash was encoded in the proof data
+    //Maybe get the program hashes from register_public_memory_main_page and iterate through tasks
 
 }

@@ -5,6 +5,9 @@ use crate::prime_field;
 use crate::stark_params;
 use crate::memory_map as mem_map;
 
+pub fn oods_check(ctx: &mut Vec<Uint256>) {
+	oods_check_layout_1(ctx);
+}
 
 /* ------------------------------------------
 		LAYOUT 1 OODS

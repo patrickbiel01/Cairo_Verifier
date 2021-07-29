@@ -13,6 +13,8 @@ mod stark_params;
 mod oods_check;
 mod public_input_offsets;
 mod verify_proof;
+mod memory_fact_registry;
+mod cairo_bootloader;
 
 fn main() {
     println!("Hello, world!");
