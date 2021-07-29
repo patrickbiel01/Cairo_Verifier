@@ -7,6 +7,7 @@ use crate::cairo_bootloader;
 use crate::verify_proof::{N_BUILTINS, N_MAIN_ARGS, N_MAIN_RETURN_VALUES};
 use crate::public_input_offsets;
 use crate::memory_map as map;
+use crate::stark_params::{PUBLIC_MEMORY_STEP};
 
 //TODO: Convert decimal to hex to get_uint256
 
@@ -273,3 +274,81 @@ pub fn verify_memory_page_facts(ctx: & Vec<Uint256>, registry: & HashMap<Uint256
     }
 }
 
+
+
+/*
+	Computes the value of the public memory quotient:
+	numerator / (denominator * padding)
+	where:
+	numerator = (z - (0 + alpha * 0))^S,
+	denominator = \prod_i( z - (addr_i + alpha * value_i) ),
+	padding = (z - (padding_addr + alpha * padding_value))^(S - N),
+	N is the actual number of public memory cells,
+	and S is the number of cells allocated for the public memory (which includes the padding).
+*/
+pub fn compute_public_memory_quotient(ctx: &Vec<Uint256>) -> Uint256 {
+	let n_values = ctx[map::MM_N_PUBLIC_MEM_ENTRIES].clone();
+	let z = ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__INTERACTION_ELM].clone();
+	let alpha = ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__HASH_INTERACTION_ELM0].clone();
+	// The size that is allocated to the public memory.
+	let pub_mem_size = uint256_ops::safe_div( &ctx[map::MM_TRACE_LENGTH], &uint256_ops::from_usize(PUBLIC_MEMORY_STEP) );
+
+	assert!( n_values < uint256_ops::get_uint256("1000000") ); //Overflow protection failed
+	assert!( n_values < pub_mem_size ); //Number of values of public memory is too large
+
+	let n_pub_mem_pages = uint256_ops::to_usize(&ctx[map::MM_N_PUBLIC_MEM_PAGES]);
+	let cumulative_prod_ptr = 
+		uint256_ops::to_usize(&ctx[map::MM_PUBLIC_INPUT_PTR]) + public_input_offsets::get_offset_page_prod(0, n_pub_mem_pages);
+	let mut denominator = compute_pubic_memory_prod( cumulative_prod_ptr, n_pub_mem_pages, ctx );
+
+	// Compute address + alpha * value for the first address-value pair for padding
+	let public_input_ptr = uint256_ops::to_usize( &ctx[map::MM_PUBLIC_INPUT_PTR] );
+
+	let padding_addr = ctx[public_input_ptr + public_input_offsets::OFFSET_PUBLIC_MEMORY_PADDING_ADDR].clone();
+	let padding_val = ctx[public_input_ptr + public_input_offsets::OFFSET_PUBLIC_MEMORY_PADDING_ADDR + 1].clone();
+
+	let hash_first_address_value = prime_field::fadd(
+		padding_addr.clone(), prime_field::fmul(
+			padding_val.clone(), alpha.clone()
+		)
+	);
+
+	// Pad the denominator with the shifted value of hash_first_address_value
+	let denom_pad = prime_field::fpow(
+            &prime_field::fsub(z.clone(), hash_first_address_value.clone()),
+            &(pub_mem_size.clone() - n_values)
+	);
+    denominator = prime_field::fmul(
+		denominator.clone(), denom_pad
+	);
+
+	// Calculate the numerator
+    let numerator = prime_field::fpow(&z, &pub_mem_size);
+
+	// Compute the final result: numerator * denominator^(-1).
+	return prime_field::fmul(
+		numerator, prime_field::inverse(&denominator)
+	);
+
+}
+
+
+/*
+	Computes the cumulative product of the public memory cells:
+	\prod_i( z - (addr_i + alpha * value_i) ).
+
+	publicMemoryPtr is an array of nValues pairs (address, value).
+	z and alpha are the perm and hash interaction elements required to calculate the product.
+*/
+fn compute_pubic_memory_prod(
+	cumulative_prods_ptr: usize, n_pub_memory_pages: usize, ctx: & Vec<Uint256>
+) -> Uint256 {
+	let last_ptr = cumulative_prods_ptr + n_pub_memory_pages;
+	let mut res = uint256_ops::get_uint256("1");
+	let mut ptr = cumulative_prods_ptr;
+	while ptr < last_ptr {
+		res = prime_field::fmul( res.clone(), ctx[ptr].clone() );
+		ptr += 1;
+	}
+	return res;
+}

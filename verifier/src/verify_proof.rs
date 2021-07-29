@@ -490,7 +490,7 @@ pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint2
     ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__HASH_INTERACTION_ELM0] = ctx[map::MM_INTERACTION_ELEMENTS + 1].clone();
     ctx[map::MM_RC16__PERM__INTERACTION_ELM] = ctx[map::MM_INTERACTION_ELEMENTS + 2].clone();
 
-    ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__PUBLIC_MEMORY_PROD] = uint256_ops::get_uint256("TODO: Implement computePublicMemoryQuotient");//TODO: Implement computePublicMemoryQuotient(ctx);
+    ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__PUBLIC_MEMORY_PROD] = memory_fact_registry::compute_public_memory_quotient(ctx);
 
     let composition_from_trace_value = uint256_ops::get_uint256("TODO: Unimlpemented comntract"); //TODO: Implement polynomial contraints contract to obtain composition_from_trace_value
 
