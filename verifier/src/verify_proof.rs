@@ -14,6 +14,7 @@ use crate::penderson_hash_y_column as penderson_hash_y;
 use crate::ecdsa_points_x_column as ecdsa_points_x;
 use crate::ecdsa_points_y_column as ecdsa_points_y;
 use crate::oods_check::{oods_check};
+use crate::memory_fact_registry;
 
 
 
@@ -557,7 +558,9 @@ pub fn verify_proof(
 
     // Process public memory and store facts of registered pages in hashmap
     let mut memory_page_fact_reg: HashMap<Uint256, bool> = HashMap::new();
-    let (pub_mem_len, mem_hash, prod) = register_public_memory_main_page(&task_meta_data, &cairo_aux_input, &mut memory_page_fact_reg);
+    let (pub_mem_len, mem_hash, prod) = memory_fact_registry::register_public_memory_main_page(
+        &task_meta_data, &cairo_aux_input, &mut memory_page_fact_reg
+    );
 
 
     //TODO: Some asserts from verifyProofAndRegister
