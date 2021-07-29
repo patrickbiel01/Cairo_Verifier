@@ -69,7 +69,7 @@ pub fn init_verifier_params(public_input: & Vec<Uint256>, proof_params: & Vec<Ui
 
      let log_trace_length = air_specific_init(public_input, ctx);
 
-     validate_fri_params(&mut fri_steps, log_trace_length.clone(), log_fri_last_layer_deg_bound.clone());
+     fri::validate_params(&mut fri_steps, log_trace_length.clone(), log_fri_last_layer_deg_bound.clone());
 
      let n_queries = uint256_ops::to_usize(&proof_params[PROOF_PARAMS_N_QUERIES_OFFSET]);
      assert!(n_queries > 0); //Number of queries must be at least one
@@ -200,6 +200,9 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
 
     return log_trace_length;
 }
+
+
+
 
 
 /*
@@ -391,6 +394,10 @@ pub fn compute_first_fri_layer(ctx: & mut Vec<Uint256>) {
     oods_check(ctx);
 }
 
+
+
+
+
 /*
     Adjusts the query indices and generates evaluation points for each query index.
 
@@ -451,9 +458,9 @@ fn bit_reverse(num: usize, num_of_bits: usize) -> usize {
     Later, we will use boundery constraints to check that those evaluations are actully consistent
     with the commited trace and composition ploynomials.
 */
-pub fn oods_consistency_check(ctx: & mut Vec<Uint256>) {
-    //TODO: Implement verifyMemoryPageFacts
-    //verifyMemoryPageFacts(ctx);
+pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint256, bool>) {
+    //Checks that information on memory pages (used from data by prover) is consistent with z, alpha values 
+    memory_fact_registry::verify_memory_page_facts(ctx, registry);
 
     let oods_point = ctx[map::MM_OODS_POINT].clone();
 
@@ -499,30 +506,6 @@ pub fn oods_consistency_check(ctx: & mut Vec<Uint256>) {
 
 
 
-pub fn validate_fri_params(fri_steps: & mut Vec<Uint256>, log_trace_length: Uint256, log_fri_last_layer_deg_bound: Uint256) {
-    assert!(fri_steps[0] == uint256_ops::get_uint256("0")); //Only eta0 == 0 is currently supported
-
-    let mut expected_log_deg_bound = log_fri_last_layer_deg_bound;
-    let n_fri_steps = fri_steps.len();
-    for i in 1..n_fri_steps {
-        let fri_step = fri_steps[i].clone();
-        assert!(fri_step > uint256_ops::get_uint256("0")); // Only the first fri step can be 0
-        assert!(fri_step <= uint256_ops::get_uint256("4")); //Max supported fri step is 4.
-        expected_log_deg_bound += fri_step;
-    }
-
-    // FRI starts with a polynomial of degree 'traceLength'.
-    // After applying all the FRI steps we expect to get a polynomial of degree less
-    // than friLastLayerDegBound.
-    assert!(expected_log_deg_bound == log_trace_length); //Fri params do not match trace length
-}
-
-
-
-
-
-
-
 
 
 
@@ -543,9 +526,10 @@ pub fn verify_proof(
 
     /* ------------ GPS Statement Verifier ----------- */
 
-    //TODO: Some asserts from verifyProofAndRegister
-
-    //TODO: Create public input (cairo_aux_inoput w/o z and alpha)
+    /* Auxiliary inputs check */
+    assert!(cairo_aux_input.len() > pub_input::OFFSET_N_PUBLIC_MEMORY_PAGES); //Invalid cairoAuxInput length
+    let n_pages = uint256_ops::to_usize( &cairo_aux_input[pub_input::OFFSET_N_PUBLIC_MEMORY_PAGES] );
+    assert!(cairo_aux_input.len() == pub_input::get_public_input_length( n_pages ) + 2); //Invalid cairoAuxInput length
 
     /* Transform cairo_aux_input -> cairoPublic input (- z, alpha) */
     // The values z and alpha are used only for the fact registration of the main page.
@@ -562,8 +546,13 @@ pub fn verify_proof(
         &task_meta_data, &cairo_aux_input, &mut memory_page_fact_reg
     );
 
+    // Make sure the first page is valid.
+    // If the size or the hash are invalid, it may indicate that there is a mismatch between the
+    // bootloader program contract and the program in the proof
+    assert!( uint256_ops::to_usize(&cairo_aux_input[pub_input::get_offset_page_size(0)]) == pub_mem_len ); //Invalid size for memory page 0
+    assert!( cairo_aux_input[pub_input::get_offset_page_hash(0)] == mem_hash ); //Invalid hash for memory page 0
+    assert!( cairo_aux_input[pub_input::get_offset_page_prod(0, n_pages)] == prod ); //Invalid cumulative product for memory page 0
 
-    //TODO: Some asserts from verifyProofAndRegister
 
     /* --------- StarkVerifier.verifyProof --------- */
 
@@ -610,7 +599,7 @@ pub fn verify_proof(
     }
 
 
-    oods_consistency_check(&mut verifier_state);
+    oods_consistency_check(&mut verifier_state, &memory_page_fact_reg);
 
 
     verifier_channel::send_field_elements(channel_idx, stark_params::N_OODS_COEFFICIENTS, map::MM_OODS_COEFFICIENTS, & mut verifier_state);

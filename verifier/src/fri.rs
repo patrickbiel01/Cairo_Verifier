@@ -17,6 +17,28 @@ static FRI_CTX_TO_FRI_HALF_INV_GROUP_OFFSET: usize = FRI_CTX_TO_FRI_GROUP_OFFSET
 static FRI_CTX_SIZE: usize  = FRI_CTX_TO_FRI_HALF_INV_GROUP_OFFSET + (FRI_GROUP_SIZE / 2);
 
 
+/* Checks that the FRI parameters are within expected values */
+pub fn validate_params(fri_steps: & mut Vec<Uint256>, log_trace_length: Uint256, log_fri_last_layer_deg_bound: Uint256) {
+    assert!(fri_steps[0] == uint256_ops::get_uint256("0")); //Only eta0 == 0 is currently supported
+
+    let mut expected_log_deg_bound = log_fri_last_layer_deg_bound;
+    let n_fri_steps = fri_steps.len();
+    for i in 1..n_fri_steps {
+        let fri_step = fri_steps[i].clone();
+        assert!(fri_step > uint256_ops::get_uint256("0")); // Only the first fri step can be 0
+        assert!(fri_step <= uint256_ops::get_uint256("4")); //Max supported fri step is 4.
+        expected_log_deg_bound += fri_step;
+    }
+
+    // FRI starts with a polynomial of degree 'traceLength'.
+    // After applying all the FRI steps we expect to get a polynomial of degree less
+    // than friLastLayerDegBound.
+    assert!(expected_log_deg_bound == log_trace_length); //Fri params do not match trace length
+}
+
+
+
+
 /* -------------------------
 	FRI Protocol Code
 		Verifies that the compositional polynomial sent by the prover 
@@ -43,6 +65,9 @@ pub fn verify_last_layer(ctx: & mut Vec<Uint256>, n_points: usize) {
 	}
 	
 }
+
+
+
 
 
 /*
@@ -109,6 +134,10 @@ pub fn fri_verify_layers(ctx: & mut Vec<Uint256>) {
 }
 
 
+
+
+
+
 /*
 	Initializes the FRI group and half inv group in the FRI context.
 */
@@ -144,6 +173,10 @@ fn init_fri_groups(fri_ctx: usize, ctx: & mut Vec<Uint256>) {
 	}
 }
 
+
+
+
+
 /*
 	Returns the bit reversal of num assuming it has the given number of bits.
 	For example, if we have numberOfBits = 6 and num = (0b)1101 == (0b)001101,
@@ -167,6 +200,12 @@ pub fn get_fri_steps(ctx: &mut Vec<Uint256>) -> Vec<Uint256> {
 	fri_steps.push(ctx[map::MM_FRI_STEPS_PTR].clone());
 	return fri_steps; //TODO: This doesn't seem right ...
 }
+
+
+
+
+
+
 
 
 /*
@@ -221,6 +260,11 @@ pub fn compute_next_layer(
 	return (fri_queue_tail - fri_queue_idx) / 3;
 
 }
+
+
+
+
+
 
  /*
 	Gathers the "cosetSize" elements that belong to the same coset
@@ -360,6 +404,10 @@ fn do_fri_steps(
 	ctx[fri_queue_tail + 1] = fri_val;
 	ctx[fri_queue_tail + 2] = coset_offset;
 }
+
+
+
+
 
 
  /*

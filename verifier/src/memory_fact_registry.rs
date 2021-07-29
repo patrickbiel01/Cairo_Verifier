@@ -6,10 +6,17 @@ use crate::uint256_ops;
 use crate::cairo_bootloader;
 use crate::verify_proof::{N_BUILTINS, N_MAIN_ARGS, N_MAIN_RETURN_VALUES};
 use crate::public_input_offsets;
+use crate::memory_map as map;
 
 //TODO: Convert decimal to hex to get_uint256
 
-static REGULAR_PAGE: usize = 0;
+// A page based on a list of pairs (address, value)
+// In this case, memoryHash = hash(address, value, address, value, address, value, ...)
+pub static REGULAR_PAGE: usize = 0;
+// A page based on adjacent memory cells, starting from a given addresss
+// In this case, memoryHash = hash(value, value, value, ...)
+pub static CONTINUOUS_PAGE: usize = 1;
+
 
 static METADATA_TASKS_OFFSET: usize = 1;
 static METADATA_OFFSET_TASK_OUTPUT_SIZE: usize = 0;
@@ -216,5 +223,53 @@ fn compute_fact_hash(
 
 	return (fact_hash, mem_hash, prod);
 
+}
+
+
+
+
+/*
+    Verifies that all the information on each public memory page (size, hash, prod, and possibly
+    address) is consistent with z and alpha, by checking that the corresponding facts were
+    registered on memoryPageFactRegistry.
+*/
+pub fn verify_memory_page_facts(ctx: & Vec<Uint256>, registry: & HashMap<Uint256, bool>) {
+    let n_pub_mem_pages = uint256_ops::to_usize(&ctx[map::MM_N_PUBLIC_MEM_PAGES]);
+
+    for page in 0..n_pub_mem_pages {
+        // Fetch page values from the public input (hash, product and size)
+        let mem_hash_ptr = uint256_ops::to_usize(&ctx[map::MM_PUBLIC_INPUT_PTR]) + public_input_offsets::get_offset_page_hash(page);
+        let prod_ptr = uint256_ops::to_usize(&ctx[map::MM_PUBLIC_INPUT_PTR]) + public_input_offsets::get_offset_page_prod(page, n_pub_mem_pages);
+        let page_size_ptr = uint256_ops::to_usize(&ctx[map::MM_PUBLIC_INPUT_PTR]) + public_input_offsets::get_offset_page_size(page);
+
+        let page_size = ctx[page_size_ptr].clone();
+        let prod = ctx[prod_ptr].clone();
+        let mem_hash = ctx[mem_hash_ptr].clone();
+
+        let mut page_addr = 0;
+        if page > 0 {
+            page_addr = uint256_ops::to_usize(&ctx[ 
+                uint256_ops::to_usize(&ctx[map::MM_PUBLIC_INPUT_PTR]) + public_input_offsets::get_offset_page_addr(page) 
+            ]);
+        }
+        let page_type = if page == 0 { REGULAR_PAGE } else { CONTINUOUS_PAGE };
+
+        // Verify that a corresponding fact is registered attesting to the consistency of the page
+        // information with z and alpha
+        let mut combined_data: Vec<u8> = vec![0; 32*8];
+        let vals: Vec<Uint256> = vec![ 
+            uint256_ops::from_usize(page_type), prime_field::get_k_modulus(), page_size, ctx[map::MM_INTERACTION_ELEMENTS].clone(), ctx[map::MM_INTERACTION_ELEMENTS + 1].clone(), prod, mem_hash, uint256_ops::from_usize(page_addr)
+        ];
+        for i in 0..8 {
+            let bytes = uint256_ops::to_fixed_bytes( &vals[i] );
+            for j in 0..bytes.len() {
+                combined_data[ 32*i + j] = bytes[j];
+            }
+        }
+        let fact_hash = uint256_ops::keccak_256(&combined_data);
+
+
+        assert!( registry.contains_key(&fact_hash) ); //Memory page fact was not registered
+    }
 }
 
