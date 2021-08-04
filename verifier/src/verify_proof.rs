@@ -15,6 +15,7 @@ use crate::ecdsa_points_x_column as ecdsa_points_x;
 use crate::ecdsa_points_y_column as ecdsa_points_y;
 use crate::oods_check::{oods_check};
 use crate::memory_fact_registry;
+use crate::polynomial_contrainsts;
 
 
 
@@ -106,7 +107,7 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
 
     // Number of steps
     let log_n_steps = public_input[pub_input::OFFSET_LOG_N_STEPS].clone();
-    assert!(log_n_steps < uint256_ops::get_uint256("32")); //Number of steps is too large
+    assert!(log_n_steps < uint256_ops::get_uint256("32")); //Number of steps is too large, steps >= 50
     ctx[map::MM_LOG_N_STEPS] = log_n_steps.clone();
     let log_trace_length = log_n_steps.clone() + uint256_ops::from_usize(stark_params::LOG_CPU_COMPONENT_HEIGHT);
 
@@ -135,7 +136,7 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
      let output_begin_addr = public_input[pub_input::OFFSET_OUTPUT_BEGIN_ADDR].clone();
      let output_stop_ptr = public_input[pub_input::OFFSET_OUTPUT_STOP_PTR].clone();
      assert!(output_begin_addr <= output_stop_ptr); //output begin_addr must be <= stop_ptr
-     let bit_64 = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("64"));
+     let bit_64 = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("40")); //2^64
      assert!(output_stop_ptr < bit_64); // Out of range output stop_ptr
 
      // "pedersen" memory segment
@@ -173,7 +174,7 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
     let mut n_public_memory_entries = uint256_ops::get_uint256("0");
     for page in 0.. uint256_ops::to_usize(&ctx[map::MM_N_PUBLIC_MEM_PAGES]) {
         let n_page_entries = public_input[pub_input::get_offset_page_size(page)].clone();
-        assert!( n_page_entries < prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("30")) ); // Too many public memory entries in one page
+        assert!( n_page_entries < prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("1E")) ); // Too many public memory entries in one page (2^30)
         n_public_memory_entries += n_page_entries;
     }
     ctx[map::MM_N_PUBLIC_MEM_ENTRIES] = n_public_memory_entries;
@@ -492,7 +493,7 @@ pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint2
 
     ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__PUBLIC_MEMORY_PROD] = memory_fact_registry::compute_public_memory_quotient(ctx);
 
-    let composition_from_trace_value = uint256_ops::get_uint256("TODO: Unimlpemented comntract"); //TODO: Implement polynomial contraints contract to obtain composition_from_trace_value
+    let composition_from_trace_value = polynomial_contrainsts::get_composition_from_trace_val(ctx);
 
     let claimed_composition = prime_field::fadd(
         ctx[map::MM_OODS_VALUES + stark_params::MASK_SIZE].clone(),

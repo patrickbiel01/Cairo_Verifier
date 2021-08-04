@@ -14,7 +14,7 @@ Note:
 
 //Calculates: Polynomial Constraints
 //RETURNS: compositionFromTraceValue - Uint256
-pub fn trace_val_w_polynomial_constraints(ctx: Vec<Uint256>) -> Uint256{
+pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 	
 	let mut res = uint256_ops::get_uint256("0");
 
