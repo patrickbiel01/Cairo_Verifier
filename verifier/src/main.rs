@@ -15,6 +15,7 @@ mod public_input_offsets;
 mod verify_proof;
 mod memory_fact_registry;
 mod cairo_bootloader;
+mod polynomial_contrainsts;
 
 fn main() {
     println!("Hello, world!");
