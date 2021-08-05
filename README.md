@@ -1,6 +1,5 @@
 # Cairo Verifier
 
-## Purpose
 A STARK Verifier for Cairo programs, written in Rust. For use in the [Open Libra](https://github.com/OLSF/libra) Blockchain as a Zero-Knowledge Verification mechanism. Cairo Programs serve as a flexible, robust alternative to manually designing polynomial constraints, which are difficult and can be error-prone.
 
 For a more detailed explanation check out my [Medium post](https://medium.com/myBlogPost).
@@ -35,6 +34,12 @@ fn verify_proof(
     cairo_verifier_id: Uint256,
 )
 ```
+
+## Goals:
+Currently this verifier only supports Cairo Programs that use Layout 1
+ - Implement Layout 0, 2 (Example: [layout 0](https://github.com/starkware-libs/starkex-contracts/tree/master/evm-verifier/solidity/contracts/cpu/layout0))
+ 	* Change values in memory_map.rs, oods_check.rs, polynomial_contrainsts.rs, stark_params.rs
+ 	* Change all of above to accept multiple layout (Look at 4th element in Cairo Aux Input)
 
 ## Resources:
 
