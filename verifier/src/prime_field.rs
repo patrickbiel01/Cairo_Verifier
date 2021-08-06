@@ -1,6 +1,6 @@
 use num256::uint256::Uint256 as Uint256;
 use crate::uint256_ops::get_uint256;
-use num_bigint::BigUint;
+use num_bigint::{BigInt, Sign, BigUint};
 
 /* -------------
     Finite Field Paramters 
@@ -55,9 +55,10 @@ pub fn fadd(a: Uint256, b: Uint256) -> Uint256 {
 }
 
 pub fn fsub(a: Uint256, b: Uint256) -> Uint256 {
-    let sub = BigUint::from_bytes_le( &a.to_bytes_le() ) - BigUint::from_bytes_le( &b.to_bytes_le() );
-    let val_bytes = sub.modpow( &BigUint::new(vec![1]) , &BigUint::from_bytes_le( &get_k_modulus().to_bytes_le() ) ).to_bytes_le(); // (a - b) % K_MOD
-    return Uint256::from_bytes_le(&val_bytes);
+    let res = fadd(
+        a.clone(), get_k_modulus() - b.clone()
+    );
+    return res;
 }
 
 pub fn fpow(val_u: & Uint256, exp_u: & Uint256) -> Uint256 {
@@ -84,7 +85,7 @@ pub fn mod_prime(val: Uint256) -> Uint256 {
 }
 
 pub fn from_montgomery(val: Uint256) -> Uint256 {
-    let prod = val * get_k_montgomery_r_inv();
+    let prod = fmul( val.clone(), get_k_montgomery_r_inv() );
     let val_bytes = prod.modpow( &get_uint256("1") , &get_k_modulus() ).to_bytes_le(); // (val * montgomery_inv_r) % K_MOD
     return Uint256::from_bytes_le(&val_bytes);
 }
@@ -104,12 +105,20 @@ mod tests {
     use super::*;
     use crate::uint256_ops::get_uint256;
 
-    //TODO: Panics at runtime [Cannot subtract b from a because b is larger than a]
     // #[test]
     // fn test_fsub_underflow() {
     //     let val = fsub( get_uint256("0"), get_uint256("1")  );
-    //     assert_eq!(val, get_k_modulus(), );
+    //     assert_eq!(val, get_k_modulus()-get_uint256("1") );
+
+    //     let val2 = fsub( get_k_modulus(), get_k_modulus()+get_uint256("1")  );
+    //     assert_eq!(val2, get_uint256("07fffffffffffdf0ffffffffffffffffffffffffffffffffffffffffffffffe0") );
     // }
+
+    #[test]
+    fn test_fsub_normal() {
+        let val = fsub( get_k_modulus(), get_uint256("10")  );
+        assert_eq!(val, get_k_modulus()-get_uint256("10"), );
+    }
 
     #[test]
     fn test_fadd_overflow() {

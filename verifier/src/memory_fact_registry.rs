@@ -154,6 +154,8 @@ pub fn register_public_memory_main_page(
 		&public_memory, cairo_aux_input[cairo_aux_input.len()-2].clone(), cairo_aux_input[cairo_aux_input.len()-1].clone(), prime.clone()
 	);
 
+	println!("fact_hash: {}", fact_hash);
+
 	//Write to the fact to the hashmap/registry
 	registry.insert(
 		fact_hash, true
@@ -183,12 +185,10 @@ fn compute_fact_hash(
 
 	let mut prod = uint256_ops::get_uint256("1");
 
-	let mem_idx = 1;
-
 	// Each value of memoryPairs is a pair: (address, value)
-	let last_idx = memory_pairs.len();
+	let last_idx = memory_pairs.len()-1;
 
-	let mut idx = mem_idx;
+	let mut idx = 0;
 	while idx < last_idx {
 		// Compute address + alpha * value
 		let addr_val_linear_comb = prime_field::fadd(
@@ -222,6 +222,8 @@ fn compute_fact_hash(
     }
     let fact_hash = uint256_ops::keccak_256(&combined_data2);
 
+	println!("{:?}", hashing_vals);
+
 	return (fact_hash, mem_hash, prod);
 
 }
@@ -247,6 +249,8 @@ pub fn verify_memory_page_facts(ctx: & Vec<Uint256>, registry: & HashMap<Uint256
         let prod = ctx[prod_ptr].clone();
         let mem_hash = ctx[mem_hash_ptr].clone();
 
+		//println!("page_size: {}, prod: {}, mem_hash: {}", page_size, prod, mem_hash);
+
         let mut page_addr = 0;
         if page > 0 {
             page_addr = uint256_ops::to_usize(&ctx[ 
@@ -261,6 +265,9 @@ pub fn verify_memory_page_facts(ctx: & Vec<Uint256>, registry: & HashMap<Uint256
         let vals: Vec<Uint256> = vec![ 
             uint256_ops::from_usize(page_type), prime_field::get_k_modulus(), page_size, ctx[map::MM_INTERACTION_ELEMENTS].clone(), ctx[map::MM_INTERACTION_ELEMENTS + 1].clone(), prod, mem_hash, uint256_ops::from_usize(page_addr)
         ];
+
+		println!("vals: {:?}", vals);
+
         for i in 0..8 {
             let bytes = uint256_ops::to_fixed_bytes( &vals[i] );
             for j in 0..bytes.len() {
@@ -269,7 +276,7 @@ pub fn verify_memory_page_facts(ctx: & Vec<Uint256>, registry: & HashMap<Uint256
         }
         let fact_hash = uint256_ops::keccak_256(&combined_data);
 
-
+		println!("fact_hash: {}, in registry? {}\n\n", fact_hash, registry.contains_key(&fact_hash));
         assert!( registry.contains_key(&fact_hash) ); //Memory page fact was not registered
     }
 }
@@ -314,6 +321,7 @@ pub fn compute_public_memory_quotient(ctx: &Vec<Uint256>) -> Uint256 {
 	);
 
 	// Pad the denominator with the shifted value of hash_first_address_value
+	println!("z: {}, hash_first_address_value: {}, pub_mem_size: {}, n_values: {}\n\n", z, hash_first_address_value, pub_mem_size, n_values);
 	let denom_pad = prime_field::fpow(
             &prime_field::fsub(z.clone(), hash_first_address_value.clone()),
             &(pub_mem_size.clone() - n_values)

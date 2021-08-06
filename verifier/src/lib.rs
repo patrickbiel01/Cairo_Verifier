@@ -1,9 +1,18 @@
-pub mod verify_merkle;
-pub mod verifier_channel;
-pub mod horner_eval;
-pub mod fri;
-
-pub mod memory_map;
-
 pub mod uint256_ops;
-pub mod prime_field;
+mod prime_field;
+mod verify_merkle;
+mod verifier_channel;
+mod horner_eval;
+mod fri;
+mod memory_map;
+mod ecdsa_points_x_column;
+mod ecdsa_points_y_column;
+mod penderson_hash_x_column;
+mod penderson_hash_y_column;
+mod stark_params;
+mod oods_check;
+mod public_input_offsets;
+mod memory_fact_registry;
+mod cairo_bootloader;
+mod polynomial_contrainsts;
+pub mod verify_proof;

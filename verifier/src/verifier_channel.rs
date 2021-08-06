@@ -17,7 +17,7 @@ fn get_prng_ptr(channel_idx: usize) -> usize {
 }
 
 pub fn init_channel(channel_offset: usize, proof_offset: usize, public_input_hash: Uint256, ctx: &mut Vec<Uint256>) {
-	ctx[channel_offset] = uint256_ops::from_usize(proof_offset + 1);
+	ctx[channel_offset] = uint256_ops::from_usize(proof_offset);
 	init_prng( get_prng_ptr(channel_offset), public_input_hash, ctx );
 }
 
@@ -30,8 +30,8 @@ pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx_inp
 
 	let mask = uint256_ops::get_uint256("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
-	let end = target_idx + n_elements;
-	while target_idx < end {
+	let end_idx = target_idx + n_elements;
+	while target_idx < end_idx {
 
 		let mut field_element = prime_field::get_k_modulus();
 		while field_element >= prime_field::get_k_modulus() {
@@ -44,12 +44,18 @@ pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx_inp
             	combined_data[i + 32] = counter_bytes[i];
         	}
 
+			//println!("ctx[digest_idx]: {}, ctx[digest_idx+1]: {}", ctx[digest_idx], ctx[digest_idx+1]);
+
 			field_element = uint256_ops::bitwise_and( &mask, &uint256_ops::keccak_256(&combined_data) );
 
 			ctx[counter_idx] += uint256_ops::get_uint256("1");
 		}
 
+		// println!("field element: {}", field_element);
+
 		ctx[target_idx] = prime_field::from_montgomery(field_element);
+
+		//println!("target_idx: {}", target_idx);
 
 		target_idx += 1;
 	}
@@ -58,7 +64,7 @@ pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx_inp
 fn read_bytes(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 {
 
 	let proof_idx = uint256_ops::to_usize( &ctx[channel_idx] );
-	let val = uint256_ops::make_copy( &ctx[proof_idx] ); 
+	let val = ctx[proof_idx].clone(); 
 	ctx[channel_idx] = uint256_ops::from_usize( proof_idx + 1 );
 
 	if mix {
@@ -66,12 +72,14 @@ fn read_bytes(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 
 		 let digest_idx = channel_idx + 1;
 		 let counter_idx = channel_idx + 2;
 
-		 ctx[counter_idx] = uint256_ops::make_copy(&val);
+		 ctx[counter_idx] = val.clone();
 
 		let mut combined_data: [u8; 64] = [0; 64];
+		let bytes_1 = uint256_ops::to_fixed_bytes( &ctx[digest_idx] );
+		let bytes_2 = uint256_ops::to_fixed_bytes( &ctx[digest_idx+1] );
 		for i in 0..31 {
-			combined_data[i] = ctx[digest_idx].to_bytes_le()[i];
-			combined_data[i + 32] = ctx[digest_idx + 1].to_bytes_le()[i];
+			combined_data[i] = bytes_1[i];
+			combined_data[i + 32] = bytes_2[i];
 		}
 		// prng.digest := keccak256(digest||val), nonce was written earlier.
 		ctx[digest_idx] = uint256_ops::keccak_256(&combined_data);
@@ -218,8 +226,8 @@ fn init_prng(prng_offset: usize, public_input_hash: Uint256, ctx: &mut Vec<Uint2
 }
 
 fn store_prng(state_idx: usize, digest: Uint256, counter: Uint256, ctx: &mut Vec<Uint256>) {
-	ctx[state_idx] = uint256_ops::make_copy( &digest );
-	ctx[state_idx + 1] = uint256_ops::make_copy( &counter );
+	ctx[state_idx] = digest.clone();
+	ctx[state_idx + 1] = counter.clone();
 }
 
 fn load_prng(state_idx: usize, ctx: & Vec<Uint256>) -> (Uint256, Uint256) {

@@ -113,6 +113,7 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 
 	denominators[3] = point.clone()   -   uint256_ops::get_uint256("1");
 
+	println!("exp_mods[12]: {}", exp_mods[12]); //TODO: Maybe use fsub??
 	denominators[4] = point.clone()   -   exp_mods[12].clone();
 
 	denominators[5] = exp_mods[2].clone() - uint256_ops::get_uint256("1");

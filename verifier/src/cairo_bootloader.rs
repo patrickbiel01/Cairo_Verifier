@@ -10,7 +10,8 @@ pub fn get_bootload_program() -> Vec<Uint256> {
 	let prog_bigint = get_bootload_program_bigint();
 
 	let mut prog: Vec<Uint256> = vec![];
-	for i in 0..prog.len() {
+
+	for i in 0..prog_bigint.len() {
 		prog.push( Uint256::from_bytes_le( &prog_bigint[i].to_bytes_le() ) );
 	}
 

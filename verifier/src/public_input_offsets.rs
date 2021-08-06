@@ -48,12 +48,13 @@ pub fn get_public_input_hash(public_input: &Vec<Uint256>) -> Uint256{
 	let pub_input_size_for_hash = get_offset_page_prod(0, n_pages);
 
 	let mut combined_data: Vec<u8> = vec![0; 32*pub_input_size_for_hash];
-	for i in 0..public_input.len() { //TODO: is it starting from 1 or 0?
+	for i in 0..pub_input_size_for_hash { //TODO: is it starting from 1 or 0?
 		let bytes = uint256_ops::to_fixed_bytes( &public_input[i] );
 		for j in 0..bytes.len() {
 			combined_data[32*i + j] = bytes[j];
 		}
 	}
+	
 	return uint256_ops::keccak_256( &combined_data );
 
 }

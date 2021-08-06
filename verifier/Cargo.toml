@@ -1,5 +1,5 @@
 [package]
-name = "verifier"
+name = "cairo-verifier"
 version = "0.1.0"
 authors = ["Patrick Biel <p.biel@outlook.com>"]
 description = "Zero Knowledge Proof Generation and Verification using STARKs"

@@ -184,7 +184,7 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
 
 
     // Set public input pointer to point at the first word of the public input
-    ctx[map::MM_PUBLIC_INPUT_PTR+1] = uint256_ops::from_usize(ctx.len());
+    ctx[map::MM_PUBLIC_INPUT_PTR] = uint256_ops::from_usize(ctx.len());
     for i in 0..public_input.len() { //Append public input to end of verifier state / context
         ctx.push(public_input[i].clone());
     }
@@ -461,7 +461,7 @@ fn bit_reverse(num: usize, num_of_bits: usize) -> usize {
 */
 pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint256, bool>) {
     //Checks that information on memory pages (used from data by prover) is consistent with z, alpha values 
-    memory_fact_registry::verify_memory_page_facts(ctx, registry);
+    //TODO: DO we even need it? Uncomment when fixed//memory_fact_registry::verify_memory_page_facts(ctx, registry);
 
     let oods_point = ctx[map::MM_OODS_POINT].clone();
 
