@@ -72,17 +72,19 @@ pub fn init_verifier_params(public_input: & Vec<Uint256>, proof_params: & Vec<Ui
 
      fri::validate_params(&mut fri_steps, log_trace_length.clone(), log_fri_last_layer_deg_bound.clone());
 
+    /* Storing the fri steps at the end of verifier context/state */
+    ctx[map::MM_FRI_STEPS_PTR] = uint256_ops::from_usize( ctx.len() );
+    for step_idx in 0..n_fri_steps {
+        ctx.push( fri_steps[step_idx].clone() );
+    }
+
+    
      let n_queries = uint256_ops::to_usize(&proof_params[PROOF_PARAMS_N_QUERIES_OFFSET]);
      assert!(n_queries > 0); //Number of queries must be at least one
      assert!(n_queries <= map::MAX_N_QUERIES); //Too many queries
      assert!( uint256_ops::from_usize(n_queries) * log_blowup_factor.clone() + pow_bits.clone() >= uint256_ops::from_usize(NUM_SECURITY_BITS) ); //Proof params do not satisfy security requirements
 
 
-
-     /* Storing the verified parameters in the verifier context/state */
-     for i in 0..n_fri_steps {
-        ctx[map::MM_FRI_STEPS_PTR + i] = fri_steps[i].clone();
-     }
      ctx[map::MM_FRI_LAST_LAYER_DEG_BOUND] = prime_field::fpow(&uint256_ops::get_uint256("2"), &log_fri_last_layer_deg_bound); //2^log_fri_last_layer_deg_bound Note: no overflow for PRIME, we can use prime_field
      ctx[map::MM_TRACE_LENGTH] = prime_field::fpow(&uint256_ops::get_uint256("2"), &log_trace_length); //2^log_trace_length
      ctx[map::MM_BLOW_UP_FACTOR] = prime_field::fpow(&uint256_ops::get_uint256("2"), &log_blowup_factor); //2^log_blowup_factor
@@ -102,8 +104,8 @@ pub fn air_specific_init(public_input: & Vec<Uint256>, ctx: & mut Vec<Uint256>) 
     assert!(public_input.len() >= pub_input::OFFSET_PUBLIC_MEMORY); //public_input is too short
 
     // Context for generated code
-    ctx[map::MM_OFFSET_SIZE] = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("16"));
-    ctx[map::MM_HALF_OFFSET_SIZE] = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("15"));
+    ctx[map::MM_OFFSET_SIZE] = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("10"));
+    ctx[map::MM_HALF_OFFSET_SIZE] = prime_field::fpow(&uint256_ops::get_uint256("2"), &uint256_ops::get_uint256("F"));
 
     // Number of steps
     let log_n_steps = public_input[pub_input::OFFSET_LOG_N_STEPS].clone();
@@ -491,6 +493,7 @@ pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint2
     ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__HASH_INTERACTION_ELM0] = ctx[map::MM_INTERACTION_ELEMENTS + 1].clone();
     ctx[map::MM_RC16__PERM__INTERACTION_ELM] = ctx[map::MM_INTERACTION_ELEMENTS + 2].clone();
 
+    //TODO: Maybe this is causing it?
     ctx[map::MM_MEMORY__MULTI_COLUMN_PERM__PERM__PUBLIC_MEMORY_PROD] = memory_fact_registry::compute_public_memory_quotient(ctx);
 
     let composition_from_trace_value = polynomial_contrainsts::get_composition_from_trace_val(ctx);
@@ -501,6 +504,9 @@ pub fn oods_consistency_check(ctx: & mut Vec<Uint256>, registry: & HashMap<Uint2
             oods_point.clone(), ctx[map::MM_OODS_VALUES + stark_params::MASK_SIZE + 1].clone()
         )
     );
+
+    // ---------  DEBUGGING   -----------
+    println!("composition_from_trace_value: {} \n claimed_composition: {}", composition_from_trace_value, claimed_composition);
 
     assert!( composition_from_trace_value == claimed_composition ); //claimedComposition does not match trace
 }
@@ -574,6 +580,8 @@ pub fn verify_proof(
     //Read trace commitment
     verifier_state[map::MM_TRACE_COMMITMENT] = verifier_channel::read_hash(channel_idx, true, &mut verifier_state);
 
+    println!("verifier_state[map::MM_TRACE_COMMITMENT]: {}", verifier_state[map::MM_TRACE_COMMITMENT]);
+
 
      if stark_params::N_COLUMNS_IN_TRACE1 > 0 { //true - has (simulated) interaction w/ prover
         // Send interaction elements
@@ -581,6 +589,7 @@ pub fn verify_proof(
 
         // Read second trace commitment
         verifier_state[map::MM_TRACE_COMMITMENT + 1] = verifier_channel::read_hash(channel_idx, true, &mut verifier_state);
+        println!("verifier_state[map::MM_TRACE_COMMITMENT + 1]: {}", verifier_state[map::MM_TRACE_COMMITMENT + 1]);
      }
 
 
@@ -593,13 +602,13 @@ pub fn verify_proof(
     verifier_channel::send_field_elements(channel_idx, 1, map::MM_OODS_POINT, & mut verifier_state);
 
 
-    //Read the answers to the Out of Domain Sampling
+    //Read the answers to the Out of Domain Sampling //TODO: Maybe here?
     let lmm_oods_vals: usize = map::MM_OODS_VALUES;
     for i in lmm_oods_vals..(lmm_oods_vals + stark_params::N_OODS_VALUES) {
         verifier_state[i] = verifier_channel::read_field_elements(channel_idx, true, &mut verifier_state);
     }
 
-
+    //TODO: Retest on remix using new ctx
     oods_consistency_check(&mut verifier_state, &memory_page_fact_reg);
 
 
@@ -608,7 +617,7 @@ pub fn verify_proof(
 
 
     let n_fri_steps = fri::get_fri_steps(&mut verifier_state).len();
-    for i in 1..(n_fri_steps-1) {
+    for i in 1..(n_fri_steps-1) { //TODO: probably wrong bounds
         verifier_channel::send_field_elements(channel_idx, 1, map::MM_FRI_EVAL_POINTS + i, & mut verifier_state);
         verifier_state[ map::MM_FRI_COMMITMENTS + i ] = verifier_channel::read_hash(channel_idx, true, &mut verifier_state);
     }

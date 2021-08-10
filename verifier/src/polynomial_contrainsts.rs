@@ -15,7 +15,17 @@ Note:
 //Calculates: Polynomial Constraints
 //RETURNS: compositionFromTraceValue - Uint256
 pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
+
+
+	// ------  DEBUGGING  ---------
+	println!("\n\nctx:\n");
+	for i in map::MM_PERIODIC_COLUMN__PEDERSEN__POINTS__X..map::MM_CONSTRAINT_POLY_ARGS_END {
+		println!("\"{}\",", ctx[i]);
+	}
+	println!("\n\n");
+	// ------  DEBUGGING  ---------
 	
+
 	let mut res = uint256_ops::get_uint256("0");
 
 	let point = ctx[map::MM_OODS_POINT].clone();
@@ -105,50 +115,49 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 	//Calculate Denominators
 	//TODO: Maybe change to modular arithmetic if it doesn't work
 	let mut denominators: Vec<Uint256> = vec![uint256_ops::get_uint256("0"); 22];
-	denominators[0] = exp_mods[0].clone()   -   uint256_ops::get_uint256("1");
+	denominators[0] = prime_field::fsub(exp_mods[0].clone(),  uint256_ops::get_uint256("1"));
 
-	denominators[1] = exp_mods[1].clone() - exp_mods[11].clone();
+	denominators[1] =  prime_field::fsub(exp_mods[1].clone(), exp_mods[11].clone());
 
-	denominators[2] = exp_mods[1].clone() - uint256_ops::get_uint256("1");
+	denominators[2] = prime_field::fsub(exp_mods[1].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[3] = point.clone()   -   uint256_ops::get_uint256("1");
+	denominators[3] =  prime_field::fsub(point.clone(),   uint256_ops::get_uint256("1"));
 
-	println!("exp_mods[12]: {}", exp_mods[12]); //TODO: Maybe use fsub??
-	denominators[4] = point.clone()   -   exp_mods[12].clone();
+	denominators[4] = prime_field::fsub(point.clone(),   exp_mods[12].clone());
 
-	denominators[5] = exp_mods[2].clone() - uint256_ops::get_uint256("1");
+	denominators[5] = prime_field::fsub(exp_mods[2].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[6] = point.clone() - exp_mods[13].clone();
+	denominators[6] = prime_field::fsub(point.clone(), exp_mods[13].clone());
 
-	denominators[7] = exp_mods[3].clone() - uint256_ops::get_uint256("1");
+	denominators[7] = prime_field::fsub(exp_mods[3].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[8] = exp_mods[4].clone() - uint256_ops::get_uint256("1");
+	denominators[8] = prime_field::fsub(exp_mods[4].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[9] = point.clone() - exp_mods[14].clone();
+	denominators[9] = prime_field::fsub(point.clone(), exp_mods[14].clone());
 
-	denominators[10] = exp_mods[5].clone() - uint256_ops::get_uint256("1");
+	denominators[10] = prime_field::fsub(exp_mods[5].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[11] = exp_mods[5].clone() - exp_mods[16].clone();
+	denominators[11] = prime_field::fsub(exp_mods[5].clone(), exp_mods[16].clone());
 
-	denominators[12] = exp_mods[5].clone() - exp_mods[15].clone();
+	denominators[12] = prime_field::fsub(exp_mods[5].clone(), exp_mods[15].clone());
 
-	denominators[13] = exp_mods[6].clone() - uint256_ops::get_uint256("1");
+	denominators[13] =	prime_field::fsub(exp_mods[6].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[14] = exp_mods[7].clone() - uint256_ops::get_uint256("1");
+	denominators[14] = prime_field::fsub(exp_mods[7].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[15] = exp_mods[9].clone() - uint256_ops::get_uint256("1");
+	denominators[15] = prime_field::fsub(exp_mods[9].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[16] = exp_mods[10].clone() - exp_mods[19].clone();
+	denominators[16] = prime_field::fsub(exp_mods[10].clone(), exp_mods[19].clone());
 
-	denominators[17] = exp_mods[10].clone() - exp_mods[15].clone();
+	denominators[17] = prime_field::fsub(exp_mods[10].clone(), exp_mods[15].clone());
 
-	denominators[18] = exp_mods[8].clone() - exp_mods[19].clone();
+	denominators[18] = prime_field::fsub(exp_mods[8].clone(), exp_mods[19].clone());
 
-	denominators[19] = exp_mods[8].clone() - exp_mods[15].clone();
+	denominators[19] = prime_field::fsub(exp_mods[8].clone(), exp_mods[15].clone());
 
-	denominators[20] = exp_mods[10].clone() - uint256_ops::get_uint256("1");
+	denominators[20] = prime_field::fsub(exp_mods[10].clone(), uint256_ops::get_uint256("1"));
 
-	denominators[21] = exp_mods[8].clone() - uint256_ops::get_uint256("1");
+	denominators[21] = prime_field::fsub(exp_mods[8].clone(), uint256_ops::get_uint256("1"));
 
 
 
@@ -182,24 +191,17 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 
 	// Compute the inverse of the product.
 	let mut prod_inv = prime_field::fpow(
-		&prod, &prime_field::fsub( prime_field::get_k_modulus(), uint256_ops::get_uint256("2") )
+		&prod, &(prime_field::get_k_modulus() - uint256_ops::get_uint256("2") )
 	);
 
-	// if prod_inv == uint256_ops::get_uint256("0") {
-	// 	// Solidity generates reverts with reason that look as follows:
-	// 	// 1. 4 bytes with the constant 0x08c379a0 (== Keccak256(b'Error(string)')[:4]).
-	// 	// 2. 32 bytes offset bytes (always 0x20 as far as i can tell).
-	// 	// 3. 32 bytes with the length of the revert reason.
-	// 	// 4. Revert reason string.
-	// 	assert!(false);//Batch inverse product is zero
-	// }
-	assert!( prod_inv == uint256_ops::get_uint256("0") ); //Batch inverse product is zero
+	assert!( prod_inv != uint256_ops::get_uint256("0") ); //Batch inverse product is zero
 
 	// Compute the inverses.
 	// Loop over denominator_invs in reverse order.
 	// currentPartialProductPtr is initialized to one past the end.
 	let mut currentPartialProductPtr = 22;
 	while currentPartialProductPtr > 0 {
+		currentPartialProductPtr -= 1;
 		// Store 1/d_{i} = (d_0 * ... * d_{i-1}) * 1/(d_0 * ... * d_{i})
 		denominator_inv[currentPartialProductPtr] = prime_field::fmul(
 			denominator_inv[currentPartialProductPtr].clone(), prod_inv.clone()
@@ -208,7 +210,6 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 		prod_inv = prime_field::fmul(
 			prod_inv.clone(), denominators[currentPartialProductPtr].clone(),
 		);
-		currentPartialProductPtr -= 1;
 	}
 
 
@@ -4542,8 +4543,8 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 
 
 
-
-
+	//TODO: res != val from remix contract != claimed composition
+	println!("res: {}, should be {}", res, uint256_ops::get_uint256("48049E063D06E1ABC713DC7A39993E623DAD686067EED7995AED9AA577A3939")); //should be 2035917695647727943757726220979464266937610546798994618436764540458292099385 or orig:332469413562224034630773164011737713001147483046416285932928330009521913301
 
 
 

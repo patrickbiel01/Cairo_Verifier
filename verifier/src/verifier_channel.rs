@@ -39,23 +39,22 @@ pub fn send_field_elements(channel_idx: usize, n_elements: usize, target_idx_inp
         	let mut combined_data: [u8; 64] = [0; 64];
 			let digest_bytes = uint256_ops::to_fixed_bytes( &ctx[digest_idx] );
 			let counter_bytes = uint256_ops::to_fixed_bytes( &ctx[digest_idx+1] );
-        	for i in 0..31 {
+        	for i in 0..32 {
             	combined_data[i] = digest_bytes[i];
             	combined_data[i + 32] = counter_bytes[i];
         	}
 
-			//println!("ctx[digest_idx]: {}, ctx[digest_idx+1]: {}", ctx[digest_idx], ctx[digest_idx+1]);
-
 			field_element = uint256_ops::bitwise_and( &mask, &uint256_ops::keccak_256(&combined_data) );
+
+			//println!("fieldElement: {}", field_element);
 
 			ctx[counter_idx] += uint256_ops::get_uint256("1");
 		}
 
-		// println!("field element: {}", field_element);
-
 		ctx[target_idx] = prime_field::from_montgomery(field_element);
 
-		//println!("target_idx: {}", target_idx);
+		//println!("target_idx: {}, ctx[target_idx]: {}", target_idx, ctx[target_idx]);
+		//println!("ctx[counter_idx]: {}", ctx[counter_idx]);
 
 		target_idx += 1;
 	}
@@ -77,7 +76,7 @@ fn read_bytes(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 
 		let mut combined_data: [u8; 64] = [0; 64];
 		let bytes_1 = uint256_ops::to_fixed_bytes( &ctx[digest_idx] );
 		let bytes_2 = uint256_ops::to_fixed_bytes( &ctx[digest_idx+1] );
-		for i in 0..31 {
+		for i in 0..32 {
 			combined_data[i] = bytes_1[i];
 			combined_data[i + 32] = bytes_2[i];
 		}
