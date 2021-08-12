@@ -8,7 +8,7 @@ use crate::verify_merkle::{verify_merkle, get_hash_mask};
 
 
 static FRI_MAX_FRI_STEP: usize = 4;
-static MAX_COSET_SIZE: usize = 2usize.pow(FRI_MAX_FRI_STEP as u32);
+static MAX_COSET_SIZE: usize = 16;// 2 ^ FRI_MAX_FRI_STEP
 static FRI_GROUP_GEN: &str = "5ec467b88826aba4537602d514425f3b0bdf467bbf302458337c45f6021e539";
 static FRI_GROUP_SIZE: usize = MAX_COSET_SIZE;
 static FRI_CTX_TO_COSET_EVALUATIONS_OFFSET: usize = 0;
