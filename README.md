@@ -11,7 +11,7 @@ Based off of STARKWare's Soldity Implementation available at: [github/starkware-
 Include in your project's *cargo.toml*:
 ```
 [dependencies]
-cairo_verifier = { git = "https://github.com/patrickbiel01/Cairo_Verifier" }
+cairo-verifier = { git = "https://github.com/patrickbiel01/Cairo_Verifier", branch = "main" }
 ```
 
 
@@ -34,6 +34,8 @@ fn verify_proof(
     cairo_verifier_id: Uint256,
 )
 ```
+
+Note: Uint256 is the [num256::uint256::Uint256 crate](https://docs.rs/num256/0.1.3/i686-pc-windows-msvc/num256/uint256/struct.Uint256.html)
 
 ## Goals:
 Currently this verifier only supports Cairo Programs that use Layout 1
