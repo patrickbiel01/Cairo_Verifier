@@ -196,9 +196,21 @@ fn bit_reverse(num: Uint256, num_of_bits: usize) -> usize {
 }
 
 pub fn get_fri_steps(ctx: &mut Vec<Uint256>) -> Vec<Uint256> {
+	let len = uint256_ops::to_usize(
+		&ctx[
+			uint256_ops::to_usize( &ctx[map::MM_FRI_STEPS_PTR] )
+		]
+	);
+
 	let mut fri_steps: Vec<Uint256> =  vec![];
-	fri_steps.push(ctx[map::MM_FRI_STEPS_PTR].clone());
-	return fri_steps; //TODO: This doesn't seem right ...
+	for i in 0..len {
+		fri_steps.push(
+			ctx[
+				uint256_ops::to_usize(&ctx[map::MM_FRI_STEPS_PTR + i + 1])
+			].clone()
+		);
+	}
+	return fri_steps;
 }
 
 

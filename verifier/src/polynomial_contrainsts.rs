@@ -18,11 +18,11 @@ pub fn get_composition_from_trace_val(ctx: &Vec<Uint256>) -> Uint256{
 
 
 	// ------  DEBUGGING  ---------
-	println!("\n\nctx:\n");
-	for i in map::MM_PERIODIC_COLUMN__PEDERSEN__POINTS__X..map::MM_CONSTRAINT_POLY_ARGS_END {
-		println!("\"{}\",", ctx[i]);
-	}
-	println!("\n\n");
+	// println!("\n\nctx:\n");
+	// for i in map::MM_PERIODIC_COLUMN__PEDERSEN__POINTS__X..map::MM_CONSTRAINT_POLY_ARGS_END {
+	// 	println!("\"{}\",", ctx[i]);
+	// }
+	// println!("\n\n");
 	// ------  DEBUGGING  ---------
 	
 

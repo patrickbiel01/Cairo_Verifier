@@ -71,4 +71,5 @@ pub static MM_COMPOSITION_QUERY_RESPONSES: usize =             0x8a7; // uint256
 pub static MM_LOG_N_STEPS: usize =                             0x907;
 pub static MM_N_PUBLIC_MEM_ENTRIES: usize =                    0x908;
 pub static MM_N_PUBLIC_MEM_PAGES: usize =                      0x909;
-pub static MM_CONTEXT_SIZE: usize =                            0x90a;
+pub static MM_CONTEXT_SIZE: usize =                            0x90c; //Note: Modified from original Layout 1 to include QUARTER_READ_NUM
+pub static QUARTER_READ_NUM: usize =                           0x90c; //QUARTER_READ_NUM is needed since verify_pow in verifier channel only reads from a quarter of a Uint256

@@ -65,6 +65,7 @@ fn read_bytes(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>) -> Uint256 
 	let proof_idx = uint256_ops::to_usize( &ctx[channel_idx] );
 	let val = ctx[proof_idx].clone(); 
 	ctx[channel_idx] = uint256_ops::from_usize( proof_idx + 1 );
+	println!("proof_ptr: {}", ctx[channel_idx]);
 
 	if mix {
 		 //Prng.mixSeedWithBytes(get_prng_ptr(channelPtr), abi.encodePacked(val));
@@ -102,39 +103,40 @@ pub fn read_field_elements(channel_idx: usize, mix: bool, ctx: &mut Vec<Uint256>
 }
 
 
-pub fn verify_pow(channel_idx: usize, pow_bits: usize, ctx: &mut Vec<Uint256>) {
+pub fn verify_pow(channel_idx: usize, pow_bits: usize, ctx: &mut Vec<Uint256>, quarter_read_ptr: usize) {
 	if pow_bits == 0 {
 		return;
 	}
 
-	let mut bytes_bank: [u8; 42] = [0; 42];
+	let mut bytes_bank: [u8; 41] = [0; 41];
 
-	//Init bytes bank wih pow_val || digest || pow_bits
-	let pow_val: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 13]; //0x0123456789abcded
-	let digest_bytes = ctx[channel_idx + 1].to_bytes_le();
-	for i in 0..bytes_bank.len() {
-		bytes_bank[i] = pow_val[i];
+	//Init bytes bank wih pow_val || digest || pow_bits 
+	let pow_val_bytes: [u8; 32] = uint256_ops::to_fixed_bytes( &uint256_ops::get_uint256("0123456789abcded000000000000000000000000000000000000000000000000") ); //0x0123456789abcded
+	let digest_bytes = uint256_ops::to_fixed_bytes(&ctx[channel_idx + 1]);
+	for i in 0..8 {
+		bytes_bank[i] = pow_val_bytes[i];
 	}
 	for i in 0..digest_bytes.len() {
 		bytes_bank[i+8] = digest_bytes[i];
 	}
 	bytes_bank[40] = pow_bits as u8;
 	//Do a Keccak on 42 bytes of 0-7: POW requirments, 8-46: digest, 41-42: pow_bits
-	let hash_bytes = uint256_ops::keccak_256(&bytes_bank).to_bytes_le();
+	let hash_bytes = uint256_ops::keccak_256(&bytes_bank).to_bytes_be();
 	//Write hash to bytes_bank
 	for i in 0..32 {
-		bytes_bank[i] = hash_bytes[i]; // TODO: LE OR BE
+		bytes_bank[i] = hash_bytes[i];
 	}
 	
 
 	//Do a second hash of keccak256(keccak256(0123456789abcded || digest || workBits) || nonce)
-	let proof_idx = uint256_ops::make_copy( &ctx[ uint256_ops::to_usize(&ctx[channel_idx]) ] );
-	let proof_idx_bytes = proof_idx.to_bytes_le();
+	let proof_data = ctx[ uint256_ops::to_usize(&ctx[channel_idx]) ].clone();
+	let proof_data_bytes = uint256_ops::to_fixed_bytes(&proof_data);
+	//println!("proof_data: {}, proof_data_bytes: {:?}", proof_data, proof_data_bytes);
 	for i in 0..8 {
-		bytes_bank[i + 32] = proof_idx_bytes[i]; //TODO: Make sure are we writing upper bytes of lower bytes
+		bytes_bank[i + 32] = proof_data_bytes[i]; //TODO: Make sure are we writing upper bytes of lower bytes
 	}
 	// Keccak of 0123456789abcded || digest || workBits) || nonce
-	let pow_digest = uint256_ops::keccak_256(&bytes_bank[0..=40]);
+	let pow_digest = uint256_ops::keccak_256(&bytes_bank[0..40]);
 
 
 
@@ -142,12 +144,16 @@ pub fn verify_pow(channel_idx: usize, pow_bits: usize, ctx: &mut Vec<Uint256>) {
 		bytes_bank[i] = digest_bytes[i];
 	}
 	// prng.digest := keccak256(digest||nonce), nonce was written earlier.
-	ctx[channel_idx + 1] = uint256_ops::keccak_256(&bytes_bank[0..=40]);
+	ctx[channel_idx + 1] = uint256_ops::keccak_256(&bytes_bank[0..40]);
 	// prng.counter := 0.
 	ctx[channel_idx + 2] = uint256_ops::get_uint256("0");
-	ctx[channel_idx] = proof_idx + uint256_ops::get_uint256("1"); //TODO: This might be incorect since 0x8 is added to proofPtr, not 0x20
+	ctx[channel_idx] += uint256_ops::get_uint256("1"); //TODO: This is incorect since 0x8 is added to proofPtr, not 0x20
+	ctx[quarter_read_ptr] = uint256_ops::get_uint256("1"); 
+	//TODO: Maybe we could modify copy of proof to add 24 0 bytes infront of data read
 
 	let pow_threshold = prime_field::fpow( &uint256_ops::get_uint256("2"), &uint256_ops::from_usize(256 - pow_bits) ); // 1 << 256 - pow_bits
+
+	println!("pow_threshold: {}, pow_digest: {}", pow_threshold, pow_digest);
 
 	assert!(pow_digest < pow_threshold); //Proof of work check failed
 }
@@ -172,23 +178,24 @@ pub fn send_random_queries(
 	for _ in 0..count {
 		if shift == 0 {
 			val = get_random_bytes( get_prng_ptr(channel_idx), ctx );
+			shift = 8;
 		}
 		
 		shift -= 2;
-		let r_shift = uint256_ops::make_copy(&val) / prime_field::fpow( &uint256_ops::get_uint256("2"), &uint256_ops::from_usize(shift) ); // val >> shift
+		let r_shift = val.clone() / prime_field::fpow( &uint256_ops::get_uint256("2"), &uint256_ops::from_usize(shift) ); // val >> shift
 		let query_idx = uint256_ops::bitwise_and( &mask, &r_shift );
 		
 		// Insert new query_idx in the correct place like insertion sort.
 		let mut idx_cpy = end_idx;
 		let mut curr = uint256_ops::get_uint256("0");
 		while idx_cpy > queries_out_idx {
-			curr = uint256_ops::make_copy( &ctx[idx_cpy - stride] );
+			curr = ctx[idx_cpy - stride].clone();
 
 			if query_idx >= curr {
 				break;
 			}
 
-			ctx[idx_cpy] = uint256_ops::make_copy( &curr );
+			ctx[idx_cpy] = curr.clone();
 			idx_cpy -= stride;
 		}
 
@@ -238,11 +245,11 @@ fn get_random_bytes_inner(digest: Uint256, counter: Uint256, ctx: &mut Vec<Uint2
 	let prime_mask = uint256_ops::get_uint256("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 	
 	// Do: Keccak( digest || counter)
-    let mut combined_data: [u8; 64] = [0; 64]; // TODO: Does this properly do abi.encode()
-	let digest_bytes = digest.to_bytes_be();
-	let counter_bytes = counter.to_bytes_be();
+    let mut combined_data: [u8; 64] = [0; 64];
+	let digest_bytes = uint256_ops::to_fixed_bytes(&digest);
+	let counter_bytes = uint256_ops::to_fixed_bytes(&counter);
 	for i in 0..32 {
-		combined_data[i] = digest_bytes[i]; //TODO: Use le or be?
+		combined_data[i] = digest_bytes[i];
 		combined_data[i + 32] = counter_bytes[i];
 	}
 	let hash = uint256_ops::keccak_256(&combined_data);
