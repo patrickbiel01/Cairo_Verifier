@@ -24,6 +24,7 @@ Compute f(a) quickly, where f is a polynomial and 'a' is a real value
 Note: Only used in the fri module
 
 ## verifier_channel.rs
+Connection for Storing Verifier State and interpretting data in proof. Also contains code deriving pseudo-randomness from merkle-tree root
 
 ## uint256_ops.rs
 Commonly used operations for unsigned, 256-bit numbers are defined here
