@@ -2,7 +2,7 @@
 
 A STARK Verifier for Cairo programs, written in Rust. For use in the [Open Libra](https://github.com/OLSF/libra) Blockchain as a Zero-Knowledge Verification mechanism. Cairo Programs serve as a flexible, robust alternative to manually designing polynomial constraints, which are difficult and can be error-prone.
 
-For a more detailed explanation check out my [Medium post](https://medium.com/myBlogPost).
+For a more detailed explanation check out my [Medium post](https://medium.com/@patrick.adam.biel/zk-starks-cairo-and-open-libra-a5e5984c82b2).
 
 Based off of STARKWare's Soldity Implementation available at: [github/starkware-libs/starkex-contracts/evm-verifier/](https://github.com/starkware-libs/starkex-contracts/tree/master/evm-verifier)
 
@@ -46,6 +46,7 @@ Currently this verifier only supports Cairo Programs that use Layout 1
 ## Resources:
 
 ### Papers
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Cairo Whitepaper](https://eprint.iacr.org/2021/1063)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Scalable, transparent, and post-quantum secure computational integrity](https://eprint.iacr.org/2018/046.pdf)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ethSTARK Documentation](https://eprint.iacr.org/2021/582.pdf)
 
